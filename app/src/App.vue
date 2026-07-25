@@ -1,5 +1,7 @@
 <template>
-  <router-view />
+  <keep-alive :include="['IndexComponent', 'StatsComponent']">
+    <router-view />
+  </keep-alive>
 </template>
 
 <script lang="ts">
