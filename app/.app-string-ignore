@@ -1,0 +1,9 @@
+^/node_modules
+^/.dotnet
+^/.ssh
+^/.vscode
+^/.aws
+^/.local
+^/.cache
+^/.vscodium-server
+^/.npm
