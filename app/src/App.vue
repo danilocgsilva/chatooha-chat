@@ -1,7 +1,9 @@
 <template>
-  <keep-alive :include="['IndexComponent', 'StatsComponent']">
-    <router-view />
-  </keep-alive>
+  <router-view v-slot="{ Component }">
+    <keep-alive :include="['IndexComponent', 'StatsComponent']">
+      <component :is="Component" />
+    </keep-alive>
+  </router-view>
 </template>
 
 <script lang="ts">

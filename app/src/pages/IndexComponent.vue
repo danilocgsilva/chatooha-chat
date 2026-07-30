@@ -109,7 +109,8 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useStore } from 'vuex';
 import MenuComponent from './../components/MenuComponent.vue';
-import { OllamaData, OllamaClient } from '../services/OllamaService';
+import OllamaData from '../domain/OllamaData';
+import OllamaClient from '../domain/OllamaClient';
 
 const store = useStore();
 const isDark = computed(() => store.state.isDark);
