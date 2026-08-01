@@ -11,6 +11,7 @@ export const useGlobalStore = defineStore('global', {
     apiMode: 'chat' as ApiMode,
     systemPrompt: '',
     showSettings: false,
+    requestError: null as string | null
   }),
   
   getters: {
@@ -22,17 +23,13 @@ export const useGlobalStore = defineStore('global', {
     getApiMode: (state) => state.apiMode,
     getSystemPrompt: (state) => state.systemPrompt,
     getShowSettings: (state) => state.showSettings,
+    getRequestError: (state) => state.requestError
   },
   
   actions: {
     toggleTheme() {
       this.isDark = !this.isDark;
       document.cookie = `theme=${this.isDark ? 'dark' : 'light'}; path=/`;
-    },
-    
-    updateServerDns(dns: string) {
-      this.serverDns = dns;
-      localStorage.setItem('serverDns', dns);
     },
     
     setSelectedModel(model: string) {
@@ -46,6 +43,11 @@ export const useGlobalStore = defineStore('global', {
     setModelsError(error: string | null) {
       this.modelsError = error;
     },
+
+    updateServerDns(dns: string) {
+      this.serverDns = dns;
+      localStorage.setItem('serverDns', dns);
+    },
     
     updateApiMode(mode: ApiMode) {
       this.apiMode = mode;
@@ -53,6 +55,10 @@ export const useGlobalStore = defineStore('global', {
     
     updateSystemPrompt(prompt: string) {
       this.systemPrompt = prompt;
+    },
+
+    updateRequestError(requestError: string|null) {
+      this.requestError = requestError;
     },
     
     toggleSettings() {

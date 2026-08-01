@@ -132,22 +132,27 @@ import SettingsComponent from './../components/SettingsComponent.vue';
 import { ApiMode } from '../domain/OllamaData';
 import AnswerAreaComponent from './../components/AnswerAreaComponent.vue';
 import MenuComponent from './../components/MenuComponent.vue';
+import { useGlobalStore } from '../store';
+
+const store = useGlobalStore();
 
 const arrowSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23888' stroke-width='2' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")`;
 
 const inputText = ref('');
 const outputText = ref('');
-const isDark = ref(document.cookie.split('; ').find(r => r.startsWith('theme='))?.split('=')[1] === 'dark');
+
+const isDark = ref(store.isDarkTheme);
+
 const loading = ref<boolean>(false);
-const serverDns = ref(localStorage.getItem('serverDns') ?? 'localhost:11434');
-const selectedModel = ref<string>('');
-const models = ref<string[]>([]);
-const modelsError = ref<string | null>(null);
+const serverDns = ref(store.getServerDns);
+const selectedModel = ref<string>(store.getSelectedModel);
+const models = ref<string[]>(store.getModels);
+const modelsError = ref<string | null>(store.getModelsError);
 const requestError = ref<string | null>(null);
 const askDate = ref<string | null>(null);
 const showSettings = ref(false);
 const apiMode = ref<ApiMode>('chat');
-const systemPrompt = ref('');
+const systemPrompt = ref(store.getSystemPrompt);
 const answered = ref<boolean>(false);
 const aborted = ref<boolean>(false);
 
@@ -160,7 +165,11 @@ let dnsDebounce: ReturnType<typeof setTimeout>;
 async function fetchModels(): Promise<void> {
   try {
     ollamClient.updateHostAndDns(serverDns.value);
-    models.value = await ollamClient.getModels();
+    const modelsAvailable = await ollamClient.getModels();
+
+    models.value = modelsAvailable;
+    // store.setModels(modelsAvailable);
+
     selectedModel.value = models.value[0] ?? '';
     modelsError.value = '';
   } catch {
@@ -171,6 +180,10 @@ async function fetchModels(): Promise<void> {
 }
 
 onMounted(fetchModels);
+
+onBeforeUnmount(() => {
+  documentTitleDynamic.stop();
+})
 
 watch(serverDns, (val) => {
   localStorage.setItem('serverDns', val);
@@ -186,9 +199,29 @@ watch(loading, (isLoading: boolean) => {
   }
 });
 
-onBeforeUnmount(() => {
-  documentTitleDynamic.stop();
-})
+watch(apiMode, (val) => {
+  store.updateApiMode(val);
+});
+
+watch(isDark, (val) => {
+  store.toggleTheme();
+});
+
+watch(selectedModel, (val) => {
+  store.setSelectedModel(val);
+});
+
+watch(systemPrompt, (val) => {
+  store.updateSystemPrompt(val);
+});
+
+watch(models, (val) => {
+  store.setModels(val);
+});
+
+watch(requestError, (val) => {
+  store.updateRequestError(val);
+});
 
 function toggleSettings(): void {
   showSettings.value = !showSettings.value;
@@ -196,7 +229,7 @@ function toggleSettings(): void {
 
 function toggleTheme(): void {
   isDark.value = !isDark.value;
-  document.cookie = `theme=${isDark.value ? 'dark' : 'light'}; path=/`;
+  store.toggleTheme();
 }
 
 function cancel(): void {
