@@ -1,12 +1,8 @@
 <template>
-  <router-view />
+  <keep-alive>
+    <router-view />
+  </keep-alive>
 </template>
-
-<script lang="ts">
-import { Vue } from 'vue-class-component';
-
-export default class App extends Vue {}
-</script>
 
 <style>
 #app {

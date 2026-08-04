@@ -124,7 +124,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue';
 import OllamaData from '../domain/OllamaData';
 import OllamaClient from '../domain/OllamaClient';
 import DocumentTitleDynamic from '../domain/DocumentTitleDynamic';
@@ -141,18 +141,30 @@ const arrowSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 const inputText = ref('');
 const outputText = ref('');
 
-const isDark = ref(store.isDarkTheme);
+const isDark = computed(() => store.isDark);
 
 const loading = ref<boolean>(false);
-const serverDns = ref(store.getServerDns);
-const selectedModel = ref<string>(store.getSelectedModel);
-const models = ref<string[]>(store.getModels);
-const modelsError = ref<string | null>(store.getModelsError);
+const serverDns = computed({
+  get: () => store.serverDns,
+  set: (val: string) => store.updateServerDns(val),
+});
+const selectedModel = computed({
+  get: () => store.selectedModel,
+  set: (val: string) => store.setSelectedModel(val),
+});
+const models = computed(() => store.models);
+const modelsError = computed(() => store.modelsError);
 const requestError = ref<string | null>(null);
 const askDate = ref<string | null>(null);
-const showSettings = ref(false);
-const apiMode = ref<ApiMode>('chat');
-const systemPrompt = ref(store.getSystemPrompt);
+const showSettings = computed(() => store.showSettings);
+const apiMode = computed({
+  get: () => store.apiMode,
+  set: (val: ApiMode) => store.updateApiMode(val),
+});
+const systemPrompt = computed({
+  get: () => store.systemPrompt,
+  set: (val: string) => store.updateSystemPrompt(val),
+});
 const answered = ref<boolean>(false);
 const aborted = ref<boolean>(false);
 
@@ -167,15 +179,15 @@ async function fetchModels(): Promise<void> {
     ollamClient.updateHostAndDns(serverDns.value);
     const modelsAvailable = await ollamClient.getModels();
 
-    models.value = modelsAvailable;
-    // store.setModels(modelsAvailable);
-
-    selectedModel.value = models.value[0] ?? '';
-    modelsError.value = '';
+    store.setModels(modelsAvailable);
+    if (!store.selectedModel && modelsAvailable.length > 0) {
+      store.setSelectedModel(modelsAvailable[0]);
+    }
+    store.setModelsError('');
   } catch {
-    models.value = [];
-    selectedModel.value = '';
-    modelsError.value = `Could not reach Ollama at ${ollama.getDnsAndPort()}. Make sure the server is running.`;
+    store.setModels([]);
+    store.setSelectedModel('');
+    store.setModelsError(`Could not reach Ollama at ${ollama.getDnsAndPort()}. Make sure the server is running.`);
   }
 }
 
@@ -186,7 +198,6 @@ onBeforeUnmount(() => {
 })
 
 watch(serverDns, (val) => {
-  localStorage.setItem('serverDns', val);
   clearTimeout(dnsDebounce);
   dnsDebounce = setTimeout(fetchModels, 3000);
 });
@@ -199,36 +210,11 @@ watch(loading, (isLoading: boolean) => {
   }
 });
 
-watch(apiMode, (val) => {
-  store.updateApiMode(val);
-});
-
-watch(isDark, (val) => {
-  store.toggleTheme();
-});
-
-watch(selectedModel, (val) => {
-  store.setSelectedModel(val);
-});
-
-watch(systemPrompt, (val) => {
-  store.updateSystemPrompt(val);
-});
-
-watch(models, (val) => {
-  store.setModels(val);
-});
-
-watch(requestError, (val) => {
-  store.updateRequestError(val);
-});
-
 function toggleSettings(): void {
-  showSettings.value = !showSettings.value;
+  store.toggleSettings();
 }
 
 function toggleTheme(): void {
-  isDark.value = !isDark.value;
   store.toggleTheme();
 }
 

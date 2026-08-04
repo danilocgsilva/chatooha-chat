@@ -21,15 +21,16 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { computed } from 'vue';
+import { useGlobalStore } from '../store';
 import MenuComponent from './../components/MenuComponent.vue';
 import StatsTableComponent from './../components/StatsTableComponent.vue';
 
-const isDark = ref(document.cookie.split('; ').find(r => r.startsWith('theme='))?.split('=')[1] === 'dark');
+const store = useGlobalStore();
+const isDark = computed(() => store.isDark);
 
 function toggleTheme(): void {
-  isDark.value = !isDark.value;
-  document.cookie = `theme=${isDark.value ? 'dark' : 'light'}; path=/`;
+  store.toggleTheme();
 }
 
 </script>
