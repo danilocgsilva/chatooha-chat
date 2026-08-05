@@ -144,8 +144,13 @@ const store = useGlobalStore();
 
 const arrowSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23888' stroke-width='2' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")`;
 
-const inputText = ref('');
+// const inputText = ref('');
 const outputText = ref('');
+
+const inputText = computed({
+  get: () => store.inputText || '',
+  set: (val) => store.setInputText(val)
+});
 
 const isDark = computed(() => store.isDark);
 

@@ -11,7 +11,8 @@ export const useGlobalStore = defineStore('global', {
     apiMode: 'chat' as ApiMode,
     systemPrompt: '',
     showSettings: false,
-    requestError: null as string | null
+    requestError: null as string | null,
+    inputText: ''
   }),
   
   getters: {
@@ -23,7 +24,8 @@ export const useGlobalStore = defineStore('global', {
     getApiMode: (state) => state.apiMode,
     getSystemPrompt: (state) => state.systemPrompt,
     getShowSettings: (state) => state.showSettings,
-    getRequestError: (state) => state.requestError
+    getRequestError: (state) => state.requestError,
+    getInputText: (state) => state.inputText,
   },
   
   actions: {
@@ -64,5 +66,9 @@ export const useGlobalStore = defineStore('global', {
     toggleSettings() {
       this.showSettings = !this.showSettings;
     },
+
+    setInputText (text: string) {
+      this.inputText = text;
+    }
   }
 });
