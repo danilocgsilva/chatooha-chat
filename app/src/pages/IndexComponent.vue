@@ -75,6 +75,12 @@
             ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-dark-muted placeholder-dark-subtle'
             : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
       ></textarea>
+      <div class="flex justify-end">
+        <button @click="copyInput" :disabled="!inputText" title="Copy to clipboard"
+          class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30" :class="isDark
+            ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
+            : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'">{{ copiedInput ? '✓ Copied' : '⎘Copy' }}</button>
+      </div>
       <SettingsComponent 
         :isDark="isDark" 
         :show="showSettings" 
@@ -167,6 +173,24 @@ const systemPrompt = computed({
 });
 const answered = ref<boolean>(false);
 const aborted = ref<boolean>(false);
+const copiedInput = ref(false);
+
+async function copyInput(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(inputText.value);
+  } catch {
+    const el = document.createElement('textarea');
+    el.value = inputText.value;
+    el.style.position = 'fixed';
+    el.style.opacity = '0';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+  }
+  copiedInput.value = true;
+  setTimeout(() => copiedInput.value = false, 2000);
+}
 
 const ollama = new OllamaData(serverDns.value);
 const ollamClient = new OllamaClient(ollama);

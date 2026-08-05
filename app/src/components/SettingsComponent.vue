@@ -35,6 +35,12 @@
                 ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-dark-muted placeholder-dark-subtle'
                 : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
           ></textarea>
+          <div class="flex justify-end">
+            <button @click="copySystemPrompt" :disabled="!systemPrompt" title="Copy to clipboard"
+              class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30" :class="isDark
+                ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
+                : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'">{{ copiedSystemPrompt ? '✓ Copied' : '⎘Copy' }}</button>
+          </div>
         </div>
       </div>
     </div>
@@ -52,9 +58,10 @@
 
 <script setup lang="ts">
 
+import { ref } from 'vue';
 import { ApiMode } from '../domain/OllamaData';
 
-defineProps<{ 
+const props = defineProps<{ 
   isDark: boolean; 
   show: boolean; 
   mode: ApiMode;
@@ -63,5 +70,24 @@ defineProps<{
 }>();
 
 defineEmits<{ (e: 'toggle'): void; (e: 'update:mode', value: ApiMode): void; (e: 'update:systemPrompt', value: string): void }>();
+
+const copiedSystemPrompt = ref(false);
+
+async function copySystemPrompt(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(props.systemPrompt);
+  } catch {
+    const el = document.createElement('textarea');
+    el.value = props.systemPrompt;
+    el.style.position = 'fixed';
+    el.style.opacity = '0';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+  }
+  copiedSystemPrompt.value = true;
+  setTimeout(() => copiedSystemPrompt.value = false, 2000);
+}
 
 </script>
