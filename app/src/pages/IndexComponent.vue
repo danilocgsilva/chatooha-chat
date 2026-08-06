@@ -144,17 +144,26 @@ const store = useGlobalStore();
 
 const arrowSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23888' stroke-width='2' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")`;
 
-// const inputText = ref('');
-const outputText = ref('');
+// const outputText = ref('');
+const outputText = computed({
+  get: () => store.outputText || '',
+  set: (val) => store.setOutputText(val)
+});
 
+const isDark = computed(() => store.isDark);
+
+// const inputText = ref<string>('');
 const inputText = computed({
   get: () => store.inputText || '',
   set: (val) => store.setInputText(val)
 });
 
-const isDark = computed(() => store.isDark);
+// const loading = ref<boolean>(false);
+const loading = computed({
+  get: () => store.loading || false,
+  set: (val) => store.setLoading(val)
+});
 
-const loading = ref<boolean>(false);
 const serverDns = computed({
   get: () => store.serverDns,
   set: (val: string) => store.updateServerDns(val),
@@ -163,21 +172,54 @@ const selectedModel = computed({
   get: () => store.selectedModel,
   set: (val: string) => store.setSelectedModel(val),
 });
-const models = computed(() => store.models);
-const modelsError = computed(() => store.modelsError);
-const requestError = ref<string | null>(null);
-const askDate = ref<string | null>(null);
-const showSettings = computed(() => store.showSettings);
+
+const models = computed(
+  () => store.models
+);
+
+const modelsError = computed(
+  () => store.modelsError
+);
+
 const apiMode = computed({
   get: () => store.apiMode,
   set: (val: ApiMode) => store.updateApiMode(val),
 });
+
+// const documentTitleDynamic = new DocumentTitleDynamic(document.title);
+// const documentTitleDynamic = DocumentTitleDynamic.instance(document.title);
+
+// const documentTitleDynamic = computed({
+//   get: () => store.documentTitleDynamic,
+//   set: (documentDynamic: DocumentTitleDynamic) => store.replaceInstance(documentDynamic),
+// });
+
+
+const documentTitleDynamic = store.getDocumentTitleDynamic;
+
+
+// let documentTitleDynamic: DocumentTitleDynamic | null = null;
+
+const requestError = ref<string | null>(null);
+const askDate = ref<string | null>(null);
+const showSettings = computed(() => store.showSettings);
+
 const systemPrompt = computed({
   get: () => store.systemPrompt,
   set: (val: string) => store.updateSystemPrompt(val),
 });
-const answered = ref<boolean>(false);
-const aborted = ref<boolean>(false);
+// const answered = ref<boolean>(false);
+// const aborted = ref<boolean>(false);
+const answered = computed({
+  get: () => store.answered,
+  set: () => (val: boolean) => store.setAnswered(val)
+});
+
+const aborted = computed({
+  get: () => store.aborted,
+  set: (val: boolean) => store.setAborted(val) 
+});
+
 const copiedInput = ref(false);
 
 async function copyInput(): Promise<void> {
@@ -199,7 +241,6 @@ async function copyInput(): Promise<void> {
 
 const ollama = new OllamaData(serverDns.value);
 const ollamClient = new OllamaClient(ollama);
-const documentTitleDynamic = new DocumentTitleDynamic(document.title);
 
 let dnsDebounce: ReturnType<typeof setTimeout>;
 
@@ -220,11 +261,18 @@ async function fetchModels(): Promise<void> {
   }
 }
 
-onMounted(fetchModels);
+onMounted(() => {
+  fetchModels();
+  // if (!documentTitleDynamic) {
+  //   documentTitleDynamic = DocumentTitleDynamic.instance(document.title);
+  // }
+});
 
-onBeforeUnmount(() => {
-  documentTitleDynamic.stop();
-})
+// onBeforeUnmount(() => {
+//   if (documentTitleDynamic) {
+//     documentTitleDynamic.stop();
+//   }
+// })
 
 watch(serverDns, (val) => {
   clearTimeout(dnsDebounce);
@@ -232,11 +280,13 @@ watch(serverDns, (val) => {
 });
 
 watch(loading, (isLoading: boolean) => {
-  if (isLoading) {
-    documentTitleDynamic.start();
-  } else {
-    documentTitleDynamic.stop();
-  }
+  // if (documentTitleDynamic) {
+    if (isLoading) {
+      documentTitleDynamic.start();
+    } else {
+      documentTitleDynamic.stop();
+    }
+  // }
 });
 
 function toggleSettings(): void {

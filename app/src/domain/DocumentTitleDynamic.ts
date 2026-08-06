@@ -4,7 +4,7 @@ export default class DocumentTitleDynamic {
 
     constructor(private baseTitle: string) {}
 
-    start() {
+    start(): void {
         this.dotCount = 0;
         this.titleInterval = setInterval(() => {
             this.dotCount = (this.dotCount % 10) + 1;
@@ -12,11 +12,15 @@ export default class DocumentTitleDynamic {
         }, 500);
     }
 
-    stop() {
+    stop(): void {
         if (this.titleInterval !== null) {
             clearInterval(this.titleInterval);
             this.titleInterval = null;
         }
         document.title = this.baseTitle;
+    }
+
+    public static instance(titleElement: string): DocumentTitleDynamic {
+        return new DocumentTitleDynamic(titleElement);
     }
 }

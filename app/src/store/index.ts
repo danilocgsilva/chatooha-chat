@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import { ApiMode } from '../domain/OllamaData';
+import DocumentTitleDynamic from '../domain/DocumentTitleDynamic';
+import { markRaw } from 'vue'
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
@@ -12,7 +14,12 @@ export const useGlobalStore = defineStore('global', {
     systemPrompt: '',
     showSettings: false,
     requestError: null as string | null,
-    inputText: ''
+    inputText: '',
+    loading: false,
+    outputText: '',
+    documentTitleDynamic: markRaw(DocumentTitleDynamic.instance(document.title)),
+    answered: false,
+    aborted: false
   }),
   
   getters: {
@@ -26,6 +33,11 @@ export const useGlobalStore = defineStore('global', {
     getShowSettings: (state) => state.showSettings,
     getRequestError: (state) => state.requestError,
     getInputText: (state) => state.inputText,
+    getLoading: (state) => state.loading,
+    getOutputText: (state) => state.outputText,
+    getDocumentTitleDynamic: (state) => state.documentTitleDynamic,
+    getAnswered: (state) => state.answered,
+    getAborted: (state) => state.aborted
   },
   
   actions: {
@@ -46,6 +58,14 @@ export const useGlobalStore = defineStore('global', {
       this.modelsError = error;
     },
 
+    setAnswered(answered: boolean) {
+      this.answered = answered;
+    },
+
+    setAborted(aborted: boolean) {
+      this.aborted = aborted;
+    },
+
     updateServerDns(dns: string) {
       this.serverDns = dns;
       localStorage.setItem('serverDns', dns);
@@ -62,6 +82,10 @@ export const useGlobalStore = defineStore('global', {
     updateRequestError(requestError: string|null) {
       this.requestError = requestError;
     },
+
+    replaceInstance(documentDynamic: DocumentTitleDynamic) {
+      this.documentTitleDynamic = documentDynamic;
+    },
     
     toggleSettings() {
       this.showSettings = !this.showSettings;
@@ -69,6 +93,14 @@ export const useGlobalStore = defineStore('global', {
 
     setInputText (text: string) {
       this.inputText = text;
+    },
+
+    setLoading (loading: boolean) {
+      this.loading = loading
+    },
+
+    setOutputText (text: string) {
+      this.outputText = text;
     }
   }
 });
