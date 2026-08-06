@@ -141,6 +141,7 @@ import MenuComponent from './../components/MenuComponent.vue';
 import { useGlobalStore } from '../store';
 
 const store = useGlobalStore();
+store.init();
 
 const arrowSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23888' stroke-width='2' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")`;
 
@@ -239,15 +240,18 @@ async function copyInput(): Promise<void> {
   setTimeout(() => copiedInput.value = false, 2000);
 }
 
-const ollama = new OllamaData(serverDns.value);
-const ollamClient = new OllamaClient(ollama);
+// const ollama = new OllamaData(serverDns.value);
+// const ollamClient = new OllamaClient(ollama);
+
+const ollama = store.ollamaData as OllamaData;
+const ollamaClient = store.ollamaClient as OllamaClient;
 
 let dnsDebounce: ReturnType<typeof setTimeout>;
 
 async function fetchModels(): Promise<void> {
   try {
-    ollamClient.updateHostAndDns(serverDns.value);
-    const modelsAvailable = await ollamClient.getModels();
+    ollamaClient.updateHostAndDns(serverDns.value);
+    const modelsAvailable = await ollamaClient.getModels();
 
     store.setModels(modelsAvailable);
     if (!store.selectedModel && modelsAvailable.length > 0) {
@@ -298,7 +302,7 @@ function toggleTheme(): void {
 }
 
 function cancel(): void {
-  ollamClient.abort();
+  ollamaClient.abort();
   answered.value = false;
   aborted.value = true;
 }
@@ -336,7 +340,7 @@ async function ask(): Promise<void> {
   askDate.value = rendersDate();
 
   try {
-    const response = await ollamClient.getResponse(
+    const response = await ollamaClient.getResponse(
       apiMode.value, 
       selectedModel.value, 
       inputText.value, 
@@ -370,7 +374,7 @@ async function ask(): Promise<void> {
     if ((e as Error).name !== 'AbortError') throw e;
   } finally {
     loading.value = false;
-    ollamClient.cleanAbord();
+    ollamaClient.cleanAbord();
     if (!requestError.value && !aborted.value) answered.value = true;
     aborted.value = false;
   }

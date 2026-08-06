@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { ApiMode } from '../domain/OllamaData';
 import DocumentTitleDynamic from '../domain/DocumentTitleDynamic';
+import OllamaData from '../domain/OllamaData';
+import OllamaClient from '../domain/OllamaClient';
 import { markRaw } from 'vue'
 
 export const useGlobalStore = defineStore('global', {
@@ -19,7 +21,9 @@ export const useGlobalStore = defineStore('global', {
     outputText: '',
     documentTitleDynamic: markRaw(DocumentTitleDynamic.instance(document.title)),
     answered: false,
-    aborted: false
+    aborted: false,
+    ollamaData: null as OllamaData | null,
+    ollamaClient: null as OllamaClient | null,
   }),
   
   getters: {
@@ -37,10 +41,25 @@ export const useGlobalStore = defineStore('global', {
     getOutputText: (state) => state.outputText,
     getDocumentTitleDynamic: (state) => state.documentTitleDynamic,
     getAnswered: (state) => state.answered,
-    getAborted: (state) => state.aborted
+    getAborted: (state) => state.aborted,
+    getOllamaClient: (state) => state.ollamaClient,
+    getOllamaData: (state) => state.ollamaData
   },
   
   actions: {
+    // init() {
+    //   this.ollamaData = new OllamaData(this.serverDns);
+    //   if (this.ollamaData) {
+    //     this.ollamaClient = new OllamaClient(this.ollamaData);
+    //   }
+    // },
+
+    init() {
+      const ollama = new OllamaData(this.serverDns);
+      this.ollamaData = ollama;
+      this.ollamaClient = new OllamaClient(ollama);
+    },
+
     toggleTheme() {
       this.isDark = !this.isDark;
       document.cookie = `theme=${this.isDark ? 'dark' : 'light'}; path=/`;
@@ -69,6 +88,10 @@ export const useGlobalStore = defineStore('global', {
     updateServerDns(dns: string) {
       this.serverDns = dns;
       localStorage.setItem('serverDns', dns);
+      // Reinitialize if needed
+      if (this.ollamaData) {
+        this.init();
+      }
     },
     
     updateApiMode(mode: ApiMode) {
