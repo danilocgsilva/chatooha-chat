@@ -195,7 +195,7 @@ const systemPrompt = computed({
 });
 const answered = computed({
   get: () => store.answered,
-  set: () => (val: boolean) => store.setAnswered(val)
+  set: (answered: boolean) => store.setAnswered(answered)
 });
 
 const aborted = computed({
@@ -271,7 +271,8 @@ function toggleTheme(): void {
 
 function cancel(): void {
   ollamaClient.abort();
-  answered.value = false;
+  // answered.value = false;
+  store.setAnswered(false);
   aborted.value = true;
 }
 
@@ -288,12 +289,14 @@ async function ask(): Promise<void> {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}s`;
   }
   
-  if (answered.value) {
+  // if (answered.value) {
+  if (store.answered) {
     inputText.value = '';
     outputText.value = '';
     requestError.value = null;
     askDate.value = null;
-    answered.value = false;
+    store.setAnswered(false);
+    alert("done!");
     return;
   }
 
@@ -337,13 +340,19 @@ async function ask(): Promise<void> {
         const chunk = JSON.parse(line);
         outputText.value += chunk.message?.content ?? chunk.response ?? '';
       }
+
+      if (done) {
+        // answered.value = true;
+        store.setAnswered(true);
+      }
     }
   } catch (e: unknown) {
     if ((e as Error).name !== 'AbortError') throw e;
   } finally {
     loading.value = false;
     ollamaClient.cleanAbord();
-    if (!requestError.value && !aborted.value) answered.value = true;
+    // if (!requestError.value && !aborted.value) answered.value = true;
+    if (!requestError.value && !aborted.value) store.setAnswered(true);
     aborted.value = false;
   }
 }

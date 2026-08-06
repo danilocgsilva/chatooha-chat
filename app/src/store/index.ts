@@ -47,13 +47,6 @@ export const useGlobalStore = defineStore('global', {
   },
   
   actions: {
-    // init() {
-    //   this.ollamaData = new OllamaData(this.serverDns);
-    //   if (this.ollamaData) {
-    //     this.ollamaClient = new OllamaClient(this.ollamaData);
-    //   }
-    // },
-
     init() {
       const ollama = new OllamaData(this.serverDns);
       this.ollamaData = ollama;
