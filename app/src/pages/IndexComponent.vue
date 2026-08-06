@@ -75,6 +75,7 @@
             ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-dark-muted placeholder-dark-subtle'
             : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
       ></textarea>
+
       <div class="flex justify-end">
         <button @click="copyInput" :disabled="!inputText" title="Copy to clipboard"
           class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30" :class="isDark
@@ -133,7 +134,6 @@
 import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue';
 import OllamaData from '../domain/OllamaData';
 import OllamaClient from '../domain/OllamaClient';
-import DocumentTitleDynamic from '../domain/DocumentTitleDynamic';
 import SettingsComponent from './../components/SettingsComponent.vue';
 import { ApiMode } from '../domain/OllamaData';
 import AnswerAreaComponent from './../components/AnswerAreaComponent.vue';
@@ -145,7 +145,6 @@ store.init();
 
 const arrowSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23888' stroke-width='2' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")`;
 
-// const outputText = ref('');
 const outputText = computed({
   get: () => store.outputText || '',
   set: (val) => store.setOutputText(val)
@@ -153,13 +152,11 @@ const outputText = computed({
 
 const isDark = computed(() => store.isDark);
 
-// const inputText = ref<string>('');
 const inputText = computed({
   get: () => store.inputText || '',
   set: (val) => store.setInputText(val)
 });
 
-// const loading = ref<boolean>(false);
 const loading = computed({
   get: () => store.loading || false,
   set: (val) => store.setLoading(val)
@@ -187,20 +184,7 @@ const apiMode = computed({
   set: (val: ApiMode) => store.updateApiMode(val),
 });
 
-// const documentTitleDynamic = new DocumentTitleDynamic(document.title);
-// const documentTitleDynamic = DocumentTitleDynamic.instance(document.title);
-
-// const documentTitleDynamic = computed({
-//   get: () => store.documentTitleDynamic,
-//   set: (documentDynamic: DocumentTitleDynamic) => store.replaceInstance(documentDynamic),
-// });
-
-
 const documentTitleDynamic = store.getDocumentTitleDynamic;
-
-
-// let documentTitleDynamic: DocumentTitleDynamic | null = null;
-
 const requestError = ref<string | null>(null);
 const askDate = ref<string | null>(null);
 const showSettings = computed(() => store.showSettings);
@@ -209,8 +193,6 @@ const systemPrompt = computed({
   get: () => store.systemPrompt,
   set: (val: string) => store.updateSystemPrompt(val),
 });
-// const answered = ref<boolean>(false);
-// const aborted = ref<boolean>(false);
 const answered = computed({
   get: () => store.answered,
   set: () => (val: boolean) => store.setAnswered(val)
@@ -240,9 +222,6 @@ async function copyInput(): Promise<void> {
   setTimeout(() => copiedInput.value = false, 2000);
 }
 
-// const ollama = new OllamaData(serverDns.value);
-// const ollamClient = new OllamaClient(ollama);
-
 const ollama = store.ollamaData as OllamaData;
 const ollamaClient = store.ollamaClient as OllamaClient;
 
@@ -267,16 +246,7 @@ async function fetchModels(): Promise<void> {
 
 onMounted(() => {
   fetchModels();
-  // if (!documentTitleDynamic) {
-  //   documentTitleDynamic = DocumentTitleDynamic.instance(document.title);
-  // }
 });
-
-// onBeforeUnmount(() => {
-//   if (documentTitleDynamic) {
-//     documentTitleDynamic.stop();
-//   }
-// })
 
 watch(serverDns, (val) => {
   clearTimeout(dnsDebounce);
@@ -284,13 +254,11 @@ watch(serverDns, (val) => {
 });
 
 watch(loading, (isLoading: boolean) => {
-  // if (documentTitleDynamic) {
     if (isLoading) {
       documentTitleDynamic.start();
     } else {
       documentTitleDynamic.stop();
     }
-  // }
 });
 
 function toggleSettings(): void {

@@ -50,10 +50,6 @@ class OllamaClient {
         this.abortController = new AbortController();
         const response = await fetch(this.ollamaData.getFullAddress(mode), {
             method: 'POST',
-            // headers: { 
-            //     'Content-Type': 'application/json',
-            //     'X-Release-Client': 'true'
-            // },
             headers: { 
                 'Content-Type': 'application/json'
             },
