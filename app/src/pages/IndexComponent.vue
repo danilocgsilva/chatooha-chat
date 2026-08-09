@@ -62,6 +62,7 @@
         <span>⚠</span>
         <span>{{ modelsError }}</span>
       </div>
+
       <textarea
         v-model="inputText"
         :readonly="!!modelsError || models.length === 0 || loading || answered"
@@ -76,12 +77,19 @@
             : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
       ></textarea>
 
-      <div class="flex justify-end">
+      <div class="flex justify-between items-center mt-1">
+        <div 
+          class="text-xs px-2 py-1 rounded"
+          :class="isDark ? 'bg-dark-surface text-dark-subtle' : 'bg-light-surface text-gray-500'"
+        >
+          {{ inputText.length }}
+        </div>
         <button @click="copyInput" :disabled="!inputText" title="Copy to clipboard"
           class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30" :class="isDark
             ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
             : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'">{{ copiedInput ? '✓ Copied' : '⎘Copy' }}</button>
       </div>
+
       <SettingsComponent 
         :isDark="isDark" 
         :show="showSettings" 
@@ -289,14 +297,12 @@ async function ask(): Promise<void> {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}s`;
   }
   
-  // if (answered.value) {
   if (store.answered) {
     inputText.value = '';
     outputText.value = '';
     requestError.value = null;
     askDate.value = null;
     store.setAnswered(false);
-    alert("done!");
     return;
   }
 
