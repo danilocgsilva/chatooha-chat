@@ -6,3 +6,4 @@ app/.gnupg/**/*
 .env
 app/.claude/**/*
 app/.claude.json
+app/.copilot/**/*
