@@ -12,3 +12,4 @@ services:
       - PORT=${PORT:-8080}
     ports:
       - "${PORT:-8099}:${PORT:-8099}"
+      - "8199:22"
