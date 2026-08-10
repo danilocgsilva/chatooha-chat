@@ -69,19 +69,8 @@
       @toggle="toggleSettings" 
       @update:mode="apiMode = $event" 
       @update:systemPrompt="systemPrompt = $event" />
-
-
-
-
-
-  
-      <ActionComponent />
-
-
-
-
-
-      <AnswerAreaComponent :isDark="isDark" :outputText="outputText" />
+    <ActionComponent />
+    <AnswerAreaComponent :isDark="isDark" :outputText="outputText" />
     </div>
   </div>
 </template>
@@ -111,10 +100,10 @@ const outputText = computed({
 
 const isDark = computed(() => store.isDark);
 
-const inputText = computed({
-  get: () => store.inputText || '',
-  set: (val) => store.setInputText(val)
-});
+// const inputText = computed({
+//   get: () => store.inputText || '',
+//   set: (val) => store.setInputText(val)
+// });
 
 const loading = computed({
   get: () => store.loading || false,
@@ -144,8 +133,25 @@ const apiMode = computed({
 });
 
 const documentTitleDynamic = store.getDocumentTitleDynamic;
-const requestError = ref<string | null>(null);
-const askDate = ref<string | null>(null);
+
+
+
+const requestError = computed({
+  get: () => store.requestError,
+  set: (val) => store.setRequestError(val)
+});
+
+
+
+const askDate = computed({
+  get: () => store.askDate,
+  set: (val) => store.setAskDate(val)
+});
+
+
+
+
+
 const showSettings = computed(() => store.showSettings);
 
 const systemPrompt = computed({
@@ -157,29 +163,29 @@ const answered = computed({
   set: (answered: boolean) => store.setAnswered(answered)
 });
 
-const aborted = computed({
-  get: () => store.aborted,
-  set: (val: boolean) => store.setAborted(val) 
-});
+// const aborted = computed({
+//   get: () => store.aborted,
+//   set: (val: boolean) => store.setAborted(val) 
+// });
 
 const copiedInput = ref(false);
 
-async function copyInput(): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(inputText.value);
-  } catch {
-    const el = document.createElement('textarea');
-    el.value = inputText.value;
-    el.style.position = 'fixed';
-    el.style.opacity = '0';
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-  }
-  copiedInput.value = true;
-  setTimeout(() => copiedInput.value = false, 2000);
-}
+// async function copyInput(): Promise<void> {
+//   try {
+//     await navigator.clipboard.writeText(inputText.value);
+//   } catch {
+//     const el = document.createElement('textarea');
+//     el.value = inputText.value;
+//     el.style.position = 'fixed';
+//     el.style.opacity = '0';
+//     document.body.appendChild(el);
+//     el.select();
+//     document.execCommand('copy');
+//     document.body.removeChild(el);
+//   }
+//   copiedInput.value = true;
+//   setTimeout(() => copiedInput.value = false, 2000);
+// }
 
 const ollama = store.ollamaData as OllamaData;
 const ollamaClient = store.ollamaClient as OllamaClient;
@@ -228,89 +234,89 @@ function toggleTheme(): void {
   store.toggleTheme();
 }
 
-function cancel(): void {
-  ollamaClient.abort();
-  // answered.value = false;
-  store.setAnswered(false);
-  aborted.value = true;
-}
+// function cancel(): void {
+//   ollamaClient.abort();
+//   // answered.value = false;
+//   store.setAnswered(false);
+//   aborted.value = true;
+// }
 
-async function ask(): Promise<void> {
-  const rendersDate = function(): string {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+// async function ask(): Promise<void> {
+//   const rendersDate = function(): string {
+//     const date = new Date();
+//     const year = date.getFullYear();
+//     const month = String(date.getMonth() + 1).padStart(2, '0');
+//     const day = String(date.getDate()).padStart(2, '0');
+//     const hours = String(date.getHours()).padStart(2, '0');
+//     const minutes = String(date.getMinutes()).padStart(2, '0');
+//     const seconds = String(date.getSeconds()).padStart(2, '0');
 
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}s`;
-  }
+//     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}s`;
+//   }
   
-  if (store.answered) {
-    inputText.value = '';
-    outputText.value = '';
-    requestError.value = null;
-    askDate.value = null;
-    store.setAnswered(false);
-    return;
-  }
+//   if (store.answered) {
+//     inputText.value = '';
+//     outputText.value = '';
+//     requestError.value = null;
+//     askDate.value = null;
+//     store.setAnswered(false);
+//     return;
+//   }
 
-  if (!inputText.value.trim() || loading.value) {
-    return;
-  }
+//   if (!inputText.value.trim() || loading.value) {
+//     return;
+//   }
 
-  loading.value = true;
-  outputText.value = '';
-  requestError.value = null;
+//   loading.value = true;
+//   outputText.value = '';
+//   requestError.value = null;
 
-  askDate.value = rendersDate();
+//   askDate.value = rendersDate();
 
-  try {
-    const response = await ollamaClient.getResponse(
-      apiMode.value, 
-      selectedModel.value, 
-      inputText.value, 
-      systemPrompt.value
-    );
+//   try {
+//     const response = await ollamaClient.getResponse(
+//       apiMode.value, 
+//       selectedModel.value, 
+//       inputText.value, 
+//       systemPrompt.value
+//     );
 
-    if (!response.ok) {
-      const data = await response.json();
-      requestError.value = data.error ?? 'Unknown error';
-      return;
-    }
-    if (!response.body) {
-      return;
-    }
+//     if (!response.ok) {
+//       const data = await response.json();
+//       requestError.value = data.error ?? 'Unknown error';
+//       return;
+//     }
+//     if (!response.body) {
+//       return;
+//     }
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
+//     const reader = response.body.getReader();
+//     const decoder = new TextDecoder();
 
-    let done = false;
-    while (!done) {
-      const { done: isDone, value } = await reader.read();
-      done = isDone;
+//     let done = false;
+//     while (!done) {
+//       const { done: isDone, value } = await reader.read();
+//       done = isDone;
 
-      const listOfData = decoder.decode(value).split('\n').filter(Boolean);
-      for (const line of listOfData) {
-        const chunk = JSON.parse(line);
-        outputText.value += chunk.message?.content ?? chunk.response ?? '';
-      }
+//       const listOfData = decoder.decode(value).split('\n').filter(Boolean);
+//       for (const line of listOfData) {
+//         const chunk = JSON.parse(line);
+//         outputText.value += chunk.message?.content ?? chunk.response ?? '';
+//       }
 
-      if (done) {
-        // answered.value = true;
-        store.setAnswered(true);
-      }
-    }
-  } catch (e: unknown) {
-    if ((e as Error).name !== 'AbortError') throw e;
-  } finally {
-    loading.value = false;
-    ollamaClient.cleanAbord();
-    if (!requestError.value && !aborted.value) store.setAnswered(true);
-    aborted.value = false;
-  }
-}
+//       if (done) {
+//         // answered.value = true;
+//         store.setAnswered(true);
+//       }
+//     }
+//   } catch (e: unknown) {
+//     if ((e as Error).name !== 'AbortError') throw e;
+//   } finally {
+//     loading.value = false;
+//     ollamaClient.cleanAbord();
+//     if (!requestError.value && !aborted.value) store.setAnswered(true);
+//     aborted.value = false;
+//   }
+// }
 
 </script>

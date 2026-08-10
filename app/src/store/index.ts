@@ -24,6 +24,7 @@ export const useGlobalStore = defineStore('global', {
     aborted: false,
     ollamaData: null as OllamaData | null,
     ollamaClient: null as OllamaClient | null,
+    askDate: null as string | null,
   }),
   
   getters: {
@@ -43,7 +44,8 @@ export const useGlobalStore = defineStore('global', {
     getAnswered: (state) => state.answered,
     getAborted: (state) => state.aborted,
     getOllamaClient: (state) => state.ollamaClient,
-    getOllamaData: (state) => state.ollamaData
+    getOllamaData: (state) => state.ollamaData,
+    getAskDate: (state) => state.askDate,
   },
   
   actions: {
@@ -60,6 +62,14 @@ export const useGlobalStore = defineStore('global', {
     
     setSelectedModel(model: string) {
       this.selectedModel = model;
+    },
+
+    setRequestError(error: string | null) {
+      this.requestError = error;
+    },
+    
+    setAskDate(date: string | null) {
+      this.askDate = date;
     },
     
     setModels(models: string[]) {
