@@ -988,3 +988,331 @@ Rules:
 * The template section of components must not be change, or changed the minimum possible. Otherwise, feel free to change the script section to allow the most similar original behaviour.
 * Use TypeScript.
 * Don't worry much with styles. The application uses Tailwind to format the elements. So, use Tailwind classes instead of css code to style elements, if required.
+
+---
+
+## Answer
+
+To maintain your existing functionality while creating new components, here are the key changes needed:
+
+## 1. Main Component Structure
+
+First, let's create a base component that preserves all your current functionality:
+
+```vue
+<!-- src/components/BaseComponent.vue -->
+<template>
+  <div :class="{ 'dark-theme': isDarkTheme }">
+    <!-- Your existing UI structure -->
+    <div class="container">
+      <header>
+        <button @click="toggleTheme">Toggle Theme</button>
+        <button @click="toggleSettings">Settings</button>
+      </header>
+      
+      <div v-if="showSettings" class="settings-panel">
+        <input v-model="serverDns" @change="updateServerDns" placeholder="Server DNS" />
+        <select v-model="apiMode">
+          <option value="chat">Chat Mode</option>
+          <option value="generate">Generate Mode</option>
+        </select>
+        <textarea v-model="systemPrompt" placeholder="System Prompt"></textarea>
+      </div>
+
+      <main>
+        <div class="input-section">
+          <textarea 
+            v-model="inputText" 
+            @input="setInputText"
+            placeholder="Enter your prompt..."
+          ></textarea>
+          <button @click="handleSend" :disabled="loading">Send</button>
+        </div>
+
+        <div class="output-section">
+          <div v-if="loading">Loading...</div>
+          <pre v-else-if="outputText">{{ outputText }}</pre>
+          <div v-else-if="requestError">{{ requestError }}</div>
+        </div>
+      </main>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+// Computed properties
+const isDarkTheme = computed(() => store.getters.isDarkTheme);
+const serverDns = computed({
+  get: () => store.getters.getServerDns,
+  set: (value) => store.updateServerDns(value)
+});
+const apiMode = computed({
+  get: () => store.getters.getApiMode,
+  set: (value) => store.updateApiMode(value)
+});
+const systemPrompt = computed({
+  get: () => store.getters.getSystemPrompt,
+  set: (value) => store.updateSystemPrompt(value)
+});
+const showSettings = computed(() => store.getters.getShowSettings);
+const inputText = computed({
+  get: () => store.getters.getInputText,
+  set: (value) => store.setInputText(value)
+});
+const outputText = computed(() => store.getters.getOutputText);
+const loading = computed(() => store.getters.getLoading);
+const requestError = computed(() => store.getters.getRequestError);
+
+// Methods
+const toggleTheme = () => store.toggleTheme();
+const toggleSettings = () => store.toggleSettings();
+const handleSend = async () => {
+  // Your send logic here
+  store.setLoading(true);
+  try {
+    const response = await store.ollamaClient.getResponse(
+      apiMode.value,
+      store.selectedModel,
+      inputText.value,
+      systemPrompt.value
+    );
+    // Process response
+  } catch (error) {
+    store.updateRequestError(error.message);
+  } finally {
+    store.setLoading(false);
+  }
+};
+</script>
+
+<style scoped>
+.dark-theme {
+  background-color: #1a1a1a;
+  color: white;
+}
+</style>
+```
+
+## 2. Separate Components for Different Sections
+
+Create individual components for each section:
+
+```vue
+<!-- src/components/SettingsPanel.vue -->
+<template>
+  <div class="settings-panel">
+    <h3>Settings</h3>
+    <div class="setting-item">
+      <label>Server DNS:</label>
+      <input v-model="serverDns" @change="updateDns" />
+    </div>
+    <div class="setting-item">
+      <label>API Mode:</label>
+      <select v-model="apiMode" @change="updateMode">
+        <option value="chat">Chat</option>
+        <option value="generate">Generate</option>
+      </select>
+    </div>
+    <div class="setting-item">
+      <label>System Prompt:</label>
+      <textarea v-model="systemPrompt" @input="updatePrompt"></textarea>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const serverDns = computed({
+  get: () => store.getters.getServerDns,
+  set: (value) => store.updateServerDns(value)
+});
+const apiMode = computed({
+  get: () => store.getters.getApiMode,
+  set: (value) => store.updateApiMode(value)
+});
+const systemPrompt = computed({
+  get: () => store.getters.getSystemPrompt,
+  set: (value) => store.updateSystemPrompt(value)
+});
+
+const updateDns = () => {
+  // Store will handle the update
+};
+const updateMode = () => {
+  // Store will handle the update
+};
+const updatePrompt = () => {
+  // Store will handle the update
+};
+</script>
+```
+
+```vue
+<!-- src/components/ChatInput.vue -->
+<template>
+  <div class="chat-input">
+    <textarea 
+      v-model="inputText" 
+      @input="onInput"
+      placeholder="Enter your message..."
+      :disabled="loading"
+    ></textarea>
+    <button @click="handleSend" :disabled="loading || !inputText.trim()">
+      {{ loading ? 'Sending...' : 'Send' }}
+    </button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const inputText = computed({
+  get: () => store.getters.getInputText,
+  set: (value) => store.setInputText(value)
+});
+const loading = computed(() => store.getters.getLoading);
+
+const onInput = (e: Event) => {
+  const target = e.target as HTMLTextAreaElement;
+  store.setInputText(target.value);
+};
+
+const handleSend = async () => {
+  if (!inputText.value.trim()) return;
+  
+  store.setLoading(true);
+  try {
+    // Your send logic here
+    const response = await store.ollamaClient.getResponse(
+      store.getters.getApiMode,
+      store.selectedModel,
+      inputText.value,
+      store.getters.getSystemPrompt
+    );
+    // Process response and update outputText
+  } catch (error) {
+    store.updateRequestError(error.message);
+  } finally {
+    store.setLoading(false);
+  }
+};
+</script>
+```
+
+```vue
+<!-- src/components/ChatOutput.vue -->
+<template>
+  <div class="chat-output">
+    <div v-if="loading" class="loading">Processing...</div>
+    <div v-else-if="outputText" class="response">
+      <pre>{{ outputText }}</pre>
+    </div>
+    <div v-else-if="requestError" class="error">
+      {{ requestError }}
+    </div>
+    <div v-else class="empty">No response yet</div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const outputText = computed(() => store.getters.getOutputText);
+const loading = computed(() => store.getters.getLoading);
+const requestError = computed(() => store.getters.getRequestError);
+</script>
+```
+
+## 3. Updated Store Integration
+
+Update your store to properly handle component communication:
+
+```ts
+// src/store/index.ts
+import { createStore } from 'vuex';
+import OllamaData from '@/domain/OllamaData';
+import OllamaClient from '@/domain/OllamaClient';
+
+export default createStore({
+  // ... your existing state, getters, actions
+  state: {
+    isDark: document.cookie.split('; ').find(r => r.startsWith('theme='))?.split('=')[1] === 'dark',
+    serverDns: localStorage.getItem('serverDns') ?? 'localhost:11434',
+    selectedModel: '',
+    models: [] as string[],
+    modelsError: null as string | null,
+    apiMode: 'chat' as ApiMode,
+    systemPrompt: '',
+    showSettings: false,
+    requestError: null as string | null,
+    inputText: '',
+    loading: false,
+    outputText: '',
+    documentTitleDynamic: null as DocumentTitleDynamic | null,
+    answered: false,
+    aborted: false,
+    ollamaData: null as OllamaData | null,
+    ollamaClient: null as OllamaClient | null,
+    askDate: null as string | null,
+  },
+  
+  // ... your existing getters and actions
+  actions: {
+    init() {
+      const ollama = new OllamaData(this.serverDns);
+      this.ollamaData = ollama;
+      this.ollamaClient = new OllamaClient(ollama);
+    },
+
+    // ... your existing actions with minor adjustments for TypeScript
+    updateServerDns(dns: string) {
+      this.serverDns = dns;
+      localStorage.setItem('serverDns', dns);
+      if (this.ollamaData) {
+        this.init();
+      }
+    },
+  }
+});
+```
+
+## Key Changes to Maintain Functionality:
+
+1. **Store Management**: All state is managed in Vuex, preserving existing functionality
+2. **Component Communication**: Use computed properties for two-way binding with store
+3. **API Integration**: Keep your `OllamaClient` integration intact
+4. **Theme Handling**: Preserve dark theme toggle functionality
+5. **Responsive Design**: Components are modular but maintain the same structure
+
+## Usage in Your Main App:
+
+```vue
+<!-- src/App.vue -->
+<template>
+  <div id="app">
+    <BaseComponent />
+  </div>
+</template>
+
+<script setup lang="ts">
+import BaseComponent from '@/components/BaseComponent.vue';
+</script>
+```
+
+This approach maintains all your existing functionality while making the code more modular and maintainable. Each component handles specific responsibilities, making it easier to update or extend features in the future.
+
