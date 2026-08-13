@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 
-import { ref, computed, onMounted, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import OllamaData from '../domain/OllamaData';
 import OllamaClient from '../domain/OllamaClient';
 import SettingsComponent from './../components/SettingsComponent.vue';
@@ -129,17 +129,6 @@ const apiMode = computed({
 
 const documentTitleDynamic = store.getDocumentTitleDynamic;
 
-const requestError = computed({
-  get: () => store.requestError,
-  set: (val) => store.setRequestError(val)
-});
-
-const askDate = computed({
-  get: () => store.askDate,
-  set: (val) => store.setAskDate(val)
-});
-
-
 const showSettings = computed(() => store.showSettings);
 
 const systemPrompt = computed({
@@ -150,8 +139,6 @@ const answered = computed({
   get: () => store.answered,
   set: (answered: boolean) => store.setAnswered(answered)
 });
-
-const copiedInput = ref(false);
 
 const ollama = store.ollamaData as OllamaData;
 const ollamaClient = store.ollamaClient as OllamaClient;
@@ -179,7 +166,7 @@ onMounted(() => {
   fetchModels();
 });
 
-watch(serverDns, (val) => {
+watch(serverDns, () => {
   clearTimeout(dnsDebounce);
   dnsDebounce = setTimeout(fetchModels, 3000);
 });
