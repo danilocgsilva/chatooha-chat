@@ -79,6 +79,11 @@ const askDate = computed({
   set: (val) => store.setAskDate(val)
 });
 
+const answerDate = computed({
+  get: () => store.answerDate,
+  set: (answerDate) => store.setAnswerDate(answerDate)
+});
+
 const inputText = computed({
   get: () => store.inputText || '',
   set: (val) => store.setInputText(val)
@@ -132,8 +137,8 @@ function unloadToContinueChat() {
 }
 
 async function ask(): Promise<void> {
-  const rendersDate = function(): string {
-    const date = new Date();
+  const rendersDate = function(date: Date): string {
+    // const date = new Date();
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -162,7 +167,7 @@ async function ask(): Promise<void> {
   outputText.value = '';
   requestError.value = null;
 
-  askDate.value = rendersDate();
+  askDate.value = rendersDate(new Date());
 
   try {
     const response = await ollamaClient.getResponse(
@@ -204,13 +209,12 @@ async function ask(): Promise<void> {
     if ((e as Error).name !== 'AbortError') throw e;
   } finally {
     loading.value = false;
+    answerDate.value = rendersDate(new Date());
     ollamaClient.cleanAbord();
     if (!requestError.value && !aborted.value) store.setAnswered(true);
     aborted.value = false;
   }
 }
-
-
 
 function cancel(): void {
   ollamaClient.abort();

@@ -26,8 +26,8 @@ export const useGlobalStore = defineStore('global', {
     ollamaData: null as OllamaData | null,
     ollamaClient: null as OllamaClient | null,
     askDate: null as string | null,
+    answerDate: null as string | null,
     history: [] as PastActivity[]
-
   }),
   
   getters: {
@@ -49,6 +49,7 @@ export const useGlobalStore = defineStore('global', {
     getOllamaClient: (state) => state.ollamaClient,
     getOllamaData: (state) => state.ollamaData,
     getAskDate: (state) => state.askDate,
+    getAnswerDate: (state) => state.answerDate
   },
   
   actions: {
@@ -73,6 +74,10 @@ export const useGlobalStore = defineStore('global', {
     
     setAskDate(date: string | null) {
       this.askDate = date;
+    },
+
+    setAnswerDate(answerDateString: string | null) {
+      this.answerDate = answerDateString;
     },
     
     setModels(models: string[]) {

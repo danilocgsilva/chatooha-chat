@@ -5,6 +5,8 @@
       ? 'bg-dark-bg text-dark-subtle border-dark-border placeholder-dark-subtle'
       : 'bg-light-surface text-gray-500 border-light-strong placeholder-light-subtle'"></textarea>
 
+  <p v-if="answerDate" class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-400'">{{ answerDate }}</p>
+
   <div class="flex justify-end">
     <button @click="copyToClipboard" :disabled="!outputText" title="Copy to clipboard"
       class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30" :class="isDark
@@ -16,12 +18,20 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useGlobalStore } from '../store';
+
+const store = useGlobalStore();
 
 const props = defineProps<{
   outputText: string,
   isDark: boolean
 }>();
+
+const answerDate = computed({
+  get: () => store.answerDate,
+  set: (answerDate) => store.setAnswerDate(answerDate)
+});
 
 const copied = ref(false);
 

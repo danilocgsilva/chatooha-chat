@@ -94,7 +94,6 @@ import { useGlobalStore } from '../store';
 import QuestionEntry from './../components/QuestionEntry.vue';
 import ActionComponent from './../components/ActionComponent.vue';
 import HistoryWidget from './../components/HistoryWidget.vue';
-import { PastActivity } from 'types/PastActivity';
 
 const store = useGlobalStore();
 store.init();
