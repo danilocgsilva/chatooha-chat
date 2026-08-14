@@ -118,10 +118,9 @@ function addHistoryItem() {
     question,
     answer,
     model,
-    timestamp: new Date().toISOString(),
+    timestamp: store.askDate,
     completed: new Date().toISOString()
   };
-  
   store.addHistoryItem(item);
 }
 
@@ -142,7 +141,8 @@ async function ask(): Promise<void> {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
 
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}s`;
+    // return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}s`;
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
   
   if (store.answered) {

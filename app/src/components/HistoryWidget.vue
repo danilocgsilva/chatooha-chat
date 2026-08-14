@@ -68,8 +68,11 @@ const isDark = computed(() => store.isDark);
 
 const history = computed(() => store.history || []);
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleString();
+function formatDate(dateString: string | null): string {
+  if (dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  }
+  return "";
 }
 </script>
