@@ -22,11 +22,9 @@
             : 'bg-light-surface text-gray-700 border-light-strong'"
           rows="3"
         />
-        <div class="mt-1 text-xs text-right" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
+        <div class="flex justify-between mt-1 text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
           {{ item.question.length }} characters
-        </div>
-        <div class="mt-1 text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
-          Asked: {{ formatDate(item.timestamp) }}
+          <span>{{ formatDate(item.timestamp) }}</span>
         </div>
       </div>
 
@@ -44,11 +42,9 @@
             : 'bg-light-surface text-gray-700 border-light-strong'"
           rows="3"
         />
-        <div class="mt-1 text-xs text-right" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
+        <div class="flex justify-between mt-1 text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
           {{ item.answer.length }} characters
-        </div>
-        <div class="mt-1 text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
-          Completed: {{ formatDate(item.completed) }}
+          <span>{{ formatDate(item.completed) }}</span>
         </div>
       </div>
 
