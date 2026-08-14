@@ -77,20 +77,6 @@
         @update:systemPrompt="systemPrompt = $event" />
       <ActionComponent />
       <AnswerAreaComponent :isDark="isDark" :outputText="outputText" />
-
-
-
-      <button
-        @click="addHistoryItem"
-        class="shrink-0 py-1.5 rounded-lg text-sm border transition-colors"
-        :class="isDark
-          ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
-          : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
-      >Add a new history test</button>
-
-
-
-
     </div>
   </div>
 </template>
@@ -114,6 +100,11 @@ const store = useGlobalStore();
 store.init();
 
 const arrowSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23888' stroke-width='2' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")`;
+
+const inputText = computed({
+  get: () => store.inputText || '',
+  set: (val) => store.setInputText(val)
+});
 
 const outputText = computed({
   get: () => store.outputText || '',
@@ -166,26 +157,6 @@ const ollama = store.ollamaData as OllamaData;
 const ollamaClient = store.ollamaClient as OllamaClient;
 
 let dnsDebounce: ReturnType<typeof setTimeout>;
-
-// function addHistoryItem(question: string, answer: string, model: string) {
-function addHistoryItem() {
-  // These three variables shall disapear and be replaced by function parameter.
-  //   look to the above commented out code
-  const question = "Your brave question";
-  const answer = "The great answer";
-  const model = "the-smart-model";
-
-  const item: PastActivity = {
-    question,
-    answer,
-    model,
-    timestamp: new Date().toISOString(),
-    completed: new Date().toISOString()
-  };
-  
-  // Add to store
-  store.addHistoryItem(item);
-}
 
 async function fetchModels(): Promise<void> {
   try {

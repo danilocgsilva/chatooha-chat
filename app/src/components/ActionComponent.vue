@@ -2,6 +2,7 @@
   <div class="flex gap-2">
     <div class="flex-1 flex gap-2">
       <button
+        @click="addHistoryItem"
         v-if="answered"
         class="flex-1 py-2 rounded-lg transition-colors"
         :class="isDark
@@ -51,6 +52,7 @@ import { useGlobalStore } from '../store';
 import { computed } from 'vue';
 import { ApiMode } from '../domain/OllamaData';
 import OllamaClient from '../domain/OllamaClient';
+import { PastActivity } from 'types/PastActivity';
 
 const store = useGlobalStore();
 
@@ -106,6 +108,30 @@ const aborted = computed({
   get: () => store.aborted,
   set: (val: boolean) => store.setAborted(val) 
 });
+
+// function addHistoryItem(question: string, answer: string, model: string) {
+function addHistoryItem() {
+  // These three variables shall disapear and be replaced by function parameter.
+  //   look to the above commented out code
+  // const question = "Your brave question";
+  // const answer = "The great answer";
+  // const model = "the-smart-model";
+
+    const question = inputText.value;
+    const answer = outputText.value;
+    const model = selectedModel.value; // assuming you want to store the selected model
+
+  const item: PastActivity = {
+    question,
+    answer,
+    model,
+    timestamp: new Date().toISOString(),
+    completed: new Date().toISOString()
+  };
+  
+  // Add to store
+  store.addHistoryItem(item);
+}
 
 async function ask(): Promise<void> {
   const rendersDate = function(): string {
