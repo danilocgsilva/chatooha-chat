@@ -12,65 +12,85 @@
           ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
           : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
       >{{ isDark ? '☀ Light' : '☾ Dark' }}</button>
-    </div>
-    <MenuComponent :isDark="isDark"></MenuComponent>
-    <h1 class="text-3xl font-bold text-center" :class="isDark ? 'text-dark-subtle' : 'text-gray-800'">
-      Chatooha Chat
-    </h1>
-    <p class="text-left" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
-      Put a question and ask. It will access the local Ollama server to answer.
-    </p>
-    <p class="text-left" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
-      Or connect to the Alooha Proxy, that behaves exactly the same as Ollama and also stores data about server performance and questions history.
-    </p>
-    <div class="flex items-end gap-2">
-      <label class="flex-1 min-w-0 flex flex-col gap-1">
-        <span class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Server DNS</span>
-        <input
-          v-model="serverDns"
-          class="px-3 py-1.5 rounded-lg text-sm border transition-colors focus:outline-none"
-          :class="isDark
-            ? 'bg-dark-surface text-dark-subtle border-dark-border'
-            : 'bg-light-surface text-gray-700 border-light-strong'"
-        />
-      </label>
-      <div class="flex-1 min-w-0 flex flex-col gap-1">
-        <span class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Model</span>
-        <select
-          v-model="selectedModel"
-          class="px-3 py-1.5 pr-8 rounded-lg text-sm border transition-colors focus:outline-none appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1rem]"
-          :class="isDark
-            ? 'bg-dark-surface text-dark-subtle border-dark-border'
-            : 'bg-light-surface text-gray-700 border-light-strong'"
-          :style="{ backgroundImage: arrowSvg }"
-        >
-          <option value="" disabled>{{ modelsError ? 'Unavailable' : models.length === 0 ? 'Loading...' : '' }}</option>
-          <option v-for="model in models" :key="model" :value="model">{{ model }}</option>
-        </select>
       </div>
-    </div>
-    <div
-      v-if="modelsError"
-      class="flex items-start gap-2 px-3 py-2 rounded-lg border text-sm"
-      :class="isDark
-        ? 'bg-red-950 text-red-400 border-red-800'
-        : 'bg-red-50 text-red-600 border-red-200'"
-    >
-      <span>⚠</span>
-      <span>{{ modelsError }}</span>
-    </div>
-    <QuestionEntry />
-    <SettingsComponent 
-      :isDark="isDark" 
-      :show="showSettings" 
-      :mode="apiMode" 
-      :systemPrompt="systemPrompt"
-      :loading="loading || answered"
-      @toggle="toggleSettings" 
-      @update:mode="apiMode = $event" 
-      @update:systemPrompt="systemPrompt = $event" />
-    <ActionComponent />
-    <AnswerAreaComponent :isDark="isDark" :outputText="outputText" />
+      <MenuComponent :isDark="isDark"></MenuComponent>
+      <h1 class="text-3xl font-bold text-center" :class="isDark ? 'text-dark-subtle' : 'text-gray-800'">
+        Chatooha Chat
+      </h1>
+      <p class="text-left" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
+        Put a question and ask. It will access the local Ollama server to answer.
+      </p>
+      <p class="text-left" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
+        Or connect to the Alooha Proxy, that behaves exactly the same as Ollama and also stores data about server performance and questions history.
+      </p>
+
+      <hr />
+      <HistoryWidget />
+      <hr />
+
+
+      <div class="flex items-end gap-2">
+        <label class="flex-1 min-w-0 flex flex-col gap-1">
+          <span class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Server DNS</span>
+          <input
+            v-model="serverDns"
+            class="px-3 py-1.5 rounded-lg text-sm border transition-colors focus:outline-none"
+            :class="isDark
+              ? 'bg-dark-surface text-dark-subtle border-dark-border'
+              : 'bg-light-surface text-gray-700 border-light-strong'"
+          />
+        </label>
+        <div class="flex-1 min-w-0 flex flex-col gap-1">
+          <span class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Model</span>
+          <select
+            v-model="selectedModel"
+            class="px-3 py-1.5 pr-8 rounded-lg text-sm border transition-colors focus:outline-none appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1rem]"
+            :class="isDark
+              ? 'bg-dark-surface text-dark-subtle border-dark-border'
+              : 'bg-light-surface text-gray-700 border-light-strong'"
+            :style="{ backgroundImage: arrowSvg }"
+          >
+            <option value="" disabled>{{ modelsError ? 'Unavailable' : models.length === 0 ? 'Loading...' : '' }}</option>
+            <option v-for="model in models" :key="model" :value="model">{{ model }}</option>
+          </select>
+        </div>
+      </div>
+      <div
+        v-if="modelsError"
+        class="flex items-start gap-2 px-3 py-2 rounded-lg border text-sm"
+        :class="isDark
+          ? 'bg-red-950 text-red-400 border-red-800'
+          : 'bg-red-50 text-red-600 border-red-200'"
+      >
+        <span>⚠</span>
+        <span>{{ modelsError }}</span>
+      </div>
+      <QuestionEntry />
+      <SettingsComponent 
+        :isDark="isDark" 
+        :show="showSettings" 
+        :mode="apiMode" 
+        :systemPrompt="systemPrompt"
+        :loading="loading || answered"
+        @toggle="toggleSettings" 
+        @update:mode="apiMode = $event" 
+        @update:systemPrompt="systemPrompt = $event" />
+      <ActionComponent />
+      <AnswerAreaComponent :isDark="isDark" :outputText="outputText" />
+
+
+
+      <button
+        @click="addHistoryItem"
+        class="shrink-0 py-1.5 rounded-lg text-sm border transition-colors"
+        :class="isDark
+          ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
+          : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
+      >Add a new history test</button>
+
+
+
+
     </div>
   </div>
 </template>
@@ -87,6 +107,8 @@ import MenuComponent from './../components/MenuComponent.vue';
 import { useGlobalStore } from '../store';
 import QuestionEntry from './../components/QuestionEntry.vue';
 import ActionComponent from './../components/ActionComponent.vue';
+import HistoryWidget from './../components/HistoryWidget.vue';
+import { PastActivity } from 'types/PastActivity';
 
 const store = useGlobalStore();
 store.init();
@@ -144,6 +166,26 @@ const ollama = store.ollamaData as OllamaData;
 const ollamaClient = store.ollamaClient as OllamaClient;
 
 let dnsDebounce: ReturnType<typeof setTimeout>;
+
+// function addHistoryItem(question: string, answer: string, model: string) {
+function addHistoryItem() {
+  // These three variables shall disapear and be replaced by function parameter.
+  //   look to the above commented out code
+  const question = "Your brave question";
+  const answer = "The great answer";
+  const model = "the-smart-model";
+
+  const item: PastActivity = {
+    question,
+    answer,
+    model,
+    timestamp: new Date().toISOString(),
+    completed: new Date().toISOString()
+  };
+  
+  // Add to store
+  store.addHistoryItem(item);
+}
 
 async function fetchModels(): Promise<void> {
   try {

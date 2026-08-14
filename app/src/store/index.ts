@@ -4,6 +4,7 @@ import DocumentTitleDynamic from '../domain/DocumentTitleDynamic';
 import OllamaData from '../domain/OllamaData';
 import OllamaClient from '../domain/OllamaClient';
 import { markRaw } from 'vue'
+import { PastActivity } from 'types/PastActivity';
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
@@ -25,6 +26,8 @@ export const useGlobalStore = defineStore('global', {
     ollamaData: null as OllamaData | null,
     ollamaClient: null as OllamaClient | null,
     askDate: null as string | null,
+    history: [] as PastActivity[]
+
   }),
   
   getters: {
@@ -127,6 +130,15 @@ export const useGlobalStore = defineStore('global', {
 
     setOutputText (text: string) {
       this.outputText = text;
+    },
+
+    setHistory(history: PastActivity[]) {
+      this.history = history;
+    },
+
+    addHistoryItem(item: PastActivity) {
+      this.history.unshift(item);
     }
+
   }
 });
