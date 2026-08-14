@@ -2,7 +2,7 @@
   <div class="flex gap-2">
     <div class="flex-1 flex gap-2">
       <button
-        @click="addHistoryItem"
+        @click="unloadToContinueChat"
         v-if="answered"
         class="flex-1 py-2 rounded-lg transition-colors"
         :class="isDark
@@ -109,17 +109,10 @@ const aborted = computed({
   set: (val: boolean) => store.setAborted(val) 
 });
 
-// function addHistoryItem(question: string, answer: string, model: string) {
 function addHistoryItem() {
-  // These three variables shall disapear and be replaced by function parameter.
-  //   look to the above commented out code
-  // const question = "Your brave question";
-  // const answer = "The great answer";
-  // const model = "the-smart-model";
-
-    const question = inputText.value;
-    const answer = outputText.value;
-    const model = selectedModel.value; // assuming you want to store the selected model
+  const question = inputText.value;
+  const answer = outputText.value;
+  const model = selectedModel.value;
 
   const item: PastActivity = {
     question,
@@ -129,8 +122,14 @@ function addHistoryItem() {
     completed: new Date().toISOString()
   };
   
-  // Add to store
   store.addHistoryItem(item);
+}
+
+function unloadToContinueChat() {
+  addHistoryItem();
+  store.setInputText("");
+  store.setOutputText("");
+  store.setAnswered(false);
 }
 
 async function ask(): Promise<void> {

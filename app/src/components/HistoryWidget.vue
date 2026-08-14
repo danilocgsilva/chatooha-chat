@@ -16,11 +16,11 @@
         <textarea
           readonly
           :value="item.question"
-          class="w-full px-3 py-2 rounded-lg text-sm border transition-colors resize-none focus:outline-none"
+          class="w-full px-3 py-2 rounded-lg text-sm border transition-colors resize-none focus:outline-none resize-y"
           :class="isDark
             ? 'bg-dark-surface text-dark-subtle border-dark-border'
             : 'bg-light-surface text-gray-700 border-light-strong'"
-          rows="3"
+          rows="15"
         />
         <div class="flex justify-between mt-1 text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
           {{ item.question.length }} characters
@@ -36,11 +36,11 @@
         <textarea
           readonly
           :value="item.answer"
-          class="w-full px-3 py-2 rounded-lg text-sm border transition-colors resize-none focus:outline-none"
+          class="w-full px-3 py-2 rounded-lg text-sm border transition-colors resize-none focus:outline-none resize-y"
           :class="isDark
             ? 'bg-dark-surface text-dark-subtle border-dark-border'
             : 'bg-light-surface text-gray-700 border-light-strong'"
-          rows="3"
+          rows="20"
         />
         <div class="flex justify-between mt-1 text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">
           {{ item.answer.length }} characters
