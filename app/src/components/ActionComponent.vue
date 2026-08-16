@@ -54,6 +54,23 @@ import { ApiMode } from '../domain/OllamaData';
 import OllamaClient from '../domain/OllamaClient';
 import { PastActivity } from 'types/PastActivity';
 
+function showNotification(title: string, message: string) {
+  if (!('Notification' in window)) {
+    console.warn('This browser does not support desktop notification');
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    new Notification(title, { body: message });
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        new Notification(title, { body: message });
+      }
+    });
+  }
+}
+
 const store = useGlobalStore();
 
 const isDark = computed(() => store.isDark);
@@ -212,6 +229,12 @@ async function ask(): Promise<void> {
     answerDate.value = rendersDate(new Date());
     ollamaClient.cleanAbord();
     if (!requestError.value && !aborted.value) store.setAnswered(true);
+
+    if (!requestError.value && !aborted.value) {
+      // store.setAnswered(true);
+      showNotification('Response Complete', 'Your answer has been generated');
+    }
+
     aborted.value = false;
   }
 }
