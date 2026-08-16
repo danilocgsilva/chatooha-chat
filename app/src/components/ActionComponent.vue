@@ -124,7 +124,7 @@ function addHistoryItem() {
     answer,
     model,
     timestamp: store.askDate,
-    completed: new Date().toISOString()
+    completed: store.answerDate
   };
   store.addHistoryItem(item);
 }
