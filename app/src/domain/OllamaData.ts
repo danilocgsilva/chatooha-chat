@@ -1,6 +1,7 @@
 export type ApiMode = 'chat' | 'generate';
 import ChatSend from "types/ChatSend";
 import GenerateSend from "types/GenerateSend";
+import type ChatHistoryDataEntry from "types/ChatHistoryDataEntry";
 
 class OllamaData {
     private serverDns: string;
@@ -38,11 +39,22 @@ class OllamaData {
         mode: ApiMode, 
         model: string, 
         prompt: string,
-        systemPrompt = ""
+        systemPrompt = "",
+        historyChatData: ChatHistoryDataEntry[] = []
     ): ChatSend | GenerateSend {
         const messages = []
         if (systemPrompt !== "") {
-            messages.push({ role: 'system', content: systemPrompt });    
+            messages.push({ role: 'system', content: systemPrompt });
+        }
+        for (const historyChatDataEntry of historyChatData) {
+            messages.push({ 
+                role: 'user', 
+                content: historyChatDataEntry.userContent 
+            });
+            messages.push({
+                role: 'assistant', 
+                content: historyChatDataEntry.assistantContent
+            });
         }
         messages.push({ role: 'user', content: prompt });
 
