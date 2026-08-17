@@ -9,7 +9,11 @@ class OllamaData {
     private tagsPath = 'api/tags';
     private ollamaStatistics = 'alooha_api/stats';
 
-    constructor(private serverDns: string, private chatId: string) {
+    constructor(
+        private serverDns: string, 
+        private chatId: string,
+        private clientVersion: string
+    ) {
     }
 
     public getDnsAndPort(): string {
@@ -61,7 +65,8 @@ class OllamaData {
                 model, 
                 messages, 
                 stream: true,
-                chatId: this.chatId
+                chatId: this.chatId,
+                clientVersion: this.clientVersion
             };
         }
         if (mode === 'generate') {

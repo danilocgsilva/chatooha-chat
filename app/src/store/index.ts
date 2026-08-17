@@ -6,6 +6,7 @@ import OllamaClient from '../domain/OllamaClient';
 import { markRaw } from 'vue'
 import { PastActivity } from 'types/PastActivity';
 
+
 export const useGlobalStore = defineStore('global', {
   state: () => ({
     isDark: document.cookie.split('; ').find(r => r.startsWith('theme='))?.split('=')[1] === 'dark',
@@ -55,8 +56,9 @@ export const useGlobalStore = defineStore('global', {
   
   actions: {
     init() {
+      const clientVersion = process.env.npm_package_version;
       this.chatId = crypto.randomUUID();
-      const ollama = new OllamaData(this.serverDns, this.chatId);
+      const ollama = new OllamaData(this.serverDns, this.chatId, clientVersion);
       this.ollamaData = ollama;
       this.ollamaClient = new OllamaClient(ollama);
     },
