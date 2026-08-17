@@ -5,7 +5,7 @@ import OllamaData from '../domain/OllamaData';
 import OllamaClient from '../domain/OllamaClient';
 import { markRaw } from 'vue'
 import { PastActivity } from 'types/PastActivity';
-
+import { v4 as uuidv4 } from 'uuid';
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
@@ -57,7 +57,7 @@ export const useGlobalStore = defineStore('global', {
   actions: {
     init() {
       const clientVersion = process.env.npm_package_version;
-      this.chatId = crypto.randomUUID();
+      this.chatId = uuidv4();
       const ollama = new OllamaData(this.serverDns, this.chatId, clientVersion);
       this.ollamaData = ollama;
       this.ollamaClient = new OllamaClient(ollama);
