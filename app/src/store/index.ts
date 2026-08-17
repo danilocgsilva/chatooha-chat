@@ -99,7 +99,6 @@ export const useGlobalStore = defineStore('global', {
     updateServerDns(dns: string) {
       this.serverDns = dns;
       localStorage.setItem('serverDns', dns);
-      // Reinitialize if needed
       if (this.ollamaData) {
         this.init();
       }
@@ -142,8 +141,8 @@ export const useGlobalStore = defineStore('global', {
     },
 
     addHistoryItem(item: PastActivity) {
-      this.history.unshift(item);
+      // this.history.unshift(item);
+      this.history.push(item);
     }
-
   }
 });

@@ -184,11 +184,11 @@ watch(serverDns, () => {
 });
 
 watch(loading, (isLoading: boolean) => {
-    if (isLoading) {
-      documentTitleDynamic.start();
-    } else {
-      documentTitleDynamic.stop();
-    }
+  if (isLoading) {
+    documentTitleDynamic.start();
+  } else {
+    documentTitleDynamic.stop();
+  }
 });
 
 function toggleSettings(): void {

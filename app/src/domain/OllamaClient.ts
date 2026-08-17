@@ -1,6 +1,7 @@
 import OllamaData, { ApiMode } from "./OllamaData";
 import { StatItem } from "types/StatItem";
 import { ApiStatResponse } from "types/ApiStatResponse";
+import { PastActivity } from "types/PastActivity";
 
 class OllamaClient {
     private ollamaData: OllamaData;
@@ -45,7 +46,8 @@ class OllamaClient {
         mode: ApiMode, 
         model: string, 
         prompt: string, 
-        systemPrompt = ''
+        systemPrompt = '',
+        historyChatData: PastActivity[] = []
     ): Promise<Response> {
         this.abortController = new AbortController();
         const response = await fetch(this.ollamaData.getFullAddress(mode), {
@@ -54,7 +56,7 @@ class OllamaClient {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(
-                this.ollamaData.getQueryObject(mode, model, prompt, systemPrompt)
+                this.ollamaData.getQueryObject(mode, model, prompt, systemPrompt, historyChatData)
             ),
             signal: this.abortController.signal,
         });

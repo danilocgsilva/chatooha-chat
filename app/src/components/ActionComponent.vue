@@ -187,11 +187,13 @@ async function ask(): Promise<void> {
   askDate.value = rendersDate(new Date());
 
   try {
+    // const reversedHistory = store.history.reverse();
     const response = await ollamaClient.getResponse(
       apiMode.value, 
       selectedModel.value, 
       inputText.value, 
-      systemPrompt.value
+      systemPrompt.value,
+      store.history
     );
 
     if (!response.ok) {
@@ -241,7 +243,6 @@ async function ask(): Promise<void> {
 
 function cancel(): void {
   ollamaClient.abort();
-  // answered.value = false;
   store.setAnswered(false);
   aborted.value = true;
 }

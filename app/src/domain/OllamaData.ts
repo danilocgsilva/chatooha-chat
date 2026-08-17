@@ -1,7 +1,7 @@
 export type ApiMode = 'chat' | 'generate';
 import ChatSend from "types/ChatSend";
 import GenerateSend from "types/GenerateSend";
-import type ChatHistoryDataEntry from "types/ChatHistoryDataEntry";
+import { PastActivity } from "types/PastActivity";
 
 class OllamaData {
     private serverDns: string;
@@ -36,11 +36,11 @@ class OllamaData {
     }
 
     public getQueryObject(
-        mode: ApiMode, 
-        model: string, 
+        mode: ApiMode,
+        model: string,
         prompt: string,
         systemPrompt = "",
-        historyChatData: ChatHistoryDataEntry[] = []
+        historyChatData: PastActivity[] = []
     ): ChatSend | GenerateSend {
         const messages = []
         if (systemPrompt !== "") {
@@ -49,11 +49,11 @@ class OllamaData {
         for (const historyChatDataEntry of historyChatData) {
             messages.push({ 
                 role: 'user', 
-                content: historyChatDataEntry.userContent 
+                content: historyChatDataEntry.question 
             });
             messages.push({
                 role: 'assistant', 
-                content: historyChatDataEntry.assistantContent
+                content: historyChatDataEntry.answer
             });
         }
         messages.push({ role: 'user', content: prompt });
