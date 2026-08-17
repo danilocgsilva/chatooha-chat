@@ -3,7 +3,8 @@ import type MessageChatSend from "./MessageChatSend"
 type ChatSend = {
     model: string,
     messages: MessageChatSend[],
-    stream: boolean
+    stream: boolean,
+    chatId: string
 };
 
 export default ChatSend;

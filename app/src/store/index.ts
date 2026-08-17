@@ -27,7 +27,8 @@ export const useGlobalStore = defineStore('global', {
     ollamaClient: null as OllamaClient | null,
     askDate: null as string | null,
     answerDate: null as string | null,
-    history: [] as PastActivity[]
+    history: [] as PastActivity[],
+    chatId: null as string | null
   }),
   
   getters: {
@@ -54,7 +55,8 @@ export const useGlobalStore = defineStore('global', {
   
   actions: {
     init() {
-      const ollama = new OllamaData(this.serverDns);
+      this.chatId = crypto.randomUUID();
+      const ollama = new OllamaData(this.serverDns, this.chatId);
       this.ollamaData = ollama;
       this.ollamaClient = new OllamaClient(ollama);
     },

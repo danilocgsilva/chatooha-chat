@@ -4,14 +4,12 @@ import GenerateSend from "types/GenerateSend";
 import { PastActivity } from "types/PastActivity";
 
 class OllamaData {
-    private serverDns: string;
     private generatePath = 'api/generate';
     private chatPath = 'api/chat';
     private tagsPath = 'api/tags';
     private ollamaStatistics = 'alooha_api/stats';
 
-    constructor(serverDns: string) {
-        this.serverDns = serverDns;
+    constructor(private serverDns: string, private chatId: string) {
     }
 
     public getDnsAndPort(): string {
@@ -62,7 +60,8 @@ class OllamaData {
             return { 
                 model, 
                 messages, 
-                stream: true
+                stream: true,
+                chatId: this.chatId
             };
         }
         if (mode === 'generate') {
