@@ -24,9 +24,7 @@
         Or connect to the Alooha Proxy, that behaves exactly the same as Ollama and also stores data about server performance and questions history.
       </p>
 
-      <hr />
       <HistoryWidget />
-      <hr />
 
 
       <div class="flex items-end gap-2">
