@@ -21,20 +21,57 @@
 
           </div>
 
-          <textarea
-            :value="systemPrompt"
-            :readonly="loading"
-            @input="$emit('update:systemPrompt', ($event.target as HTMLTextAreaElement).value)"
-            placeholder="Type system prompt here..."
-            class="w-full h-24 p-3 rounded-lg border resize-y focus:outline-none focus:ring-2 transition-colors"
-            :class="loading
-              ? isDark
-                ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default placeholder-dark-subtle'
-                : 'bg-light-surface text-gray-500 border-light-strong cursor-default placeholder-light-subtle'
-              : isDark
-                ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-dark-muted placeholder-dark-subtle'
-                : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
-          ></textarea>
+          <div class="flex gap-4">
+            <div class="w-2/3">
+              <textarea
+                :value="systemPrompt"
+                :readonly="loading"
+                @input="$emit('update:systemPrompt', ($event.target as HTMLTextAreaElement).value)"
+                placeholder="Type system prompt here..."
+                class="w-full h-24 p-3 rounded-lg border resize-y focus:outline-none focus:ring-2 transition-colors"
+                :class="loading
+                  ? isDark
+                    ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default placeholder-dark-subtle'
+                    : 'bg-light-surface text-gray-500 border-light-strong cursor-default placeholder-light-subtle'
+                  : isDark
+                    ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-dark-muted placeholder-dark-subtle'
+                    : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
+              ></textarea>
+            </div>
+            <div class="w-1/3 flex flex-col gap-2">
+              <div class="flex gap-2">
+                <input 
+                  v-model="newKey" 
+                  type="text" 
+                  placeholder="Key" 
+                  class="flex-1 p-2 rounded border text-sm"
+                  :class="isDark 
+                    ? 'bg-dark-surface border-dark-border text-dark-subtle' 
+                    : 'bg-light-bg border-light-strong text-gray-800'"
+                />
+                <input 
+                  v-model="newValue" 
+                  type="text" 
+                  placeholder="Value" 
+                  class="flex-1 p-2 rounded border text-sm"
+                  :class="isDark 
+                    ? 'bg-dark-surface border-dark-border text-dark-subtle' 
+                    : 'bg-light-bg border-light-strong text-gray-800'"
+                />
+              </div>
+              <button 
+                @click="addOption" 
+                :disabled="!newKey.trim()"
+                class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30"
+                :class="isDark
+                  ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
+                  : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
+              >
+                Add Option
+              </button>
+            </div>
+          </div>
+          
           <div class="flex justify-end">
             <button @click="copySystemPrompt" :disabled="!systemPrompt" title="Copy to clipboard"
               class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30" :class="isDark
@@ -72,6 +109,8 @@ const props = defineProps<{
 defineEmits<{ (e: 'toggle'): void; (e: 'update:mode', value: ApiMode): void; (e: 'update:systemPrompt', value: string): void }>();
 
 const copiedSystemPrompt = ref(false);
+const newKey = ref('');
+const newValue = ref('');
 
 async function copySystemPrompt(): Promise<void> {
   try {
@@ -88,6 +127,13 @@ async function copySystemPrompt(): Promise<void> {
   }
   copiedSystemPrompt.value = true;
   setTimeout(() => copiedSystemPrompt.value = false, 2000);
+}
+
+function addOption(): void {
+  // Just for layout testing - no actual behavior
+  console.log('Add option:', newKey.value, newValue.value);
+  newKey.value = '';
+  newValue.value = '';
 }
 
 </script>
