@@ -22,7 +22,7 @@
           </div>
 
           <div class="flex gap-4">
-            <div class="w-2/3">
+            <div class="w-full">
               <textarea
                 :value="systemPrompt"
                 :readonly="loading"
@@ -38,13 +38,13 @@
                     : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
               ></textarea>
             </div>
-            <div class="w-1/3 flex flex-col gap-2">
+            <div class="flex flex-col gap-2 w-1/3">
               <div class="flex gap-2">
                 <input 
                   v-model="newKey" 
                   type="text" 
                   placeholder="Key" 
-                  class="flex-1 p-2 rounded border text-sm"
+                  class="flex-1 min-w-[80px] p-2 rounded border text-sm"
                   :class="isDark 
                     ? 'bg-dark-surface border-dark-border text-dark-subtle' 
                     : 'bg-light-bg border-light-strong text-gray-800'"
@@ -53,7 +53,7 @@
                   v-model="newValue" 
                   type="text" 
                   placeholder="Value" 
-                  class="flex-1 p-2 rounded border text-sm"
+                  class="flex-1 min-w-[80px] p-2 rounded border text-sm"
                   :class="isDark 
                     ? 'bg-dark-surface border-dark-border text-dark-subtle' 
                     : 'bg-light-bg border-light-strong text-gray-800'"

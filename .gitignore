@@ -7,3 +7,4 @@ app/.gnupg/**/*
 app/.claude/**/*
 app/.claude.json
 app/.copilot/**/*
+.aider*
