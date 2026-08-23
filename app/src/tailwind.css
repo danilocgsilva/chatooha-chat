@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 /* Custom utility classes for better control over min-width */
-.min-w-xs {
+#settings-key-value-inputs .min-w-xs {
   min-width: 2rem;
 }
 
-.min-w-sm {
+#settings-key-value-inputs .min-w-sm {
   min-width: 4rem;
 }

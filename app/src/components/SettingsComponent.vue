@@ -38,7 +38,7 @@
                     : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
               ></textarea>
             </div>
-            <div class="w-1/3 flex flex-col gap-2 min-w-[120px]">
+            <div id="settings-key-value-inputs" class="w-1/3 flex flex-col gap-2 min-w-[120px]">
               <div class="flex gap-2">
                 <input 
                   v-model="newKey" 
