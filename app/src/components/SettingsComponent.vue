@@ -137,7 +137,12 @@ const props = defineProps<{
   loading: boolean
 }>();
 
-defineEmits<{ (e: 'toggle'): void; (e: 'update:mode', value: ApiMode): void; (e: 'update:systemPrompt', value: string): void }>();
+const emits = defineEmits<{
+  (e: 'toggle'): void; 
+  (e: 'update:mode', value: ApiMode): void; 
+  (e: 'update:systemPrompt', value: string): void 
+  (e: 'update:settings', value: {key: string, value: string}[]): void;
+}>();
 
 const copiedSystemPrompt = ref(false);
 const newKey = ref('');
@@ -167,8 +172,9 @@ function addOption(): void {
       key: newKey.value,
       value: newValue.value
     });
+
+    emits('update:settings', dynamicOptions.value);
     
-    // Clear inputs
     newKey.value = '';
     newValue.value = '';
   }
@@ -176,6 +182,7 @@ function addOption(): void {
 
 function removeOption(index: number): void {
   dynamicOptions.value.splice(index, 1);
+  emits('update:settings', dynamicOptions.value);
 }
 
 </script>
