@@ -39,6 +39,7 @@
               ></textarea>
             </div>
             <div class="flex flex-col gap-2 w-1/3">
+              <!-- Existing key/value inputs -->
               <div class="flex gap-2">
                 <input 
                   v-model="newKey" 
@@ -59,6 +60,36 @@
                     : 'bg-light-bg border-light-strong text-gray-800'"
                 />
               </div>
+              
+              <!-- Dynamic key/value pairs -->
+              <div v-for="(pair, index) in dynamicOptions" :key="index" class="flex gap-2 mt-1">
+                <input 
+                  v-model="pair.key" 
+                  type="text" 
+                  placeholder="Key" 
+                  class="flex-1 min-w-[80px] p-2 rounded border text-sm"
+                  :class="isDark 
+                    ? 'bg-dark-surface border-dark-border text-dark-subtle' 
+                    : 'bg-light-bg border-light-strong text-gray-800'"
+                />
+                <input 
+                  v-model="pair.value" 
+                  type="text" 
+                  placeholder="Value" 
+                  class="flex-1 min-w-[80px] p-2 rounded border text-sm"
+                  :class="isDark 
+                    ? 'bg-dark-surface border-dark-border text-dark-subtle' 
+                    : 'bg-light-bg border-light-strong text-gray-800'"
+                />
+                <button 
+                  @click="removeOption(index)"
+                  class="px-2 py-1.5 rounded-lg text-sm border transition-colors"
+                  :class="isDark
+                    ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
+                    : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
+                >×</button>
+              </div>
+              
               <button 
                 @click="addOption" 
                 :disabled="!newKey.trim()"
@@ -111,6 +142,7 @@ defineEmits<{ (e: 'toggle'): void; (e: 'update:mode', value: ApiMode): void; (e:
 const copiedSystemPrompt = ref(false);
 const newKey = ref('');
 const newValue = ref('');
+const dynamicOptions = ref<{key: string, value: string}[]>([]);
 
 async function copySystemPrompt(): Promise<void> {
   try {
@@ -130,10 +162,20 @@ async function copySystemPrompt(): Promise<void> {
 }
 
 function addOption(): void {
-  // Just for layout testing - no actual behavior
-  console.log('Add option:', newKey.value, newValue.value);
-  newKey.value = '';
-  newValue.value = '';
+  if (newKey.value.trim()) {
+    dynamicOptions.value.push({
+      key: newKey.value,
+      value: newValue.value
+    });
+    
+    // Clear inputs
+    newKey.value = '';
+    newValue.value = '';
+  }
+}
+
+function removeOption(index: number): void {
+  dynamicOptions.value.splice(index, 1);
 }
 
 </script>
