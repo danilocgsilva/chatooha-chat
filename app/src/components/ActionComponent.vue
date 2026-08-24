@@ -131,6 +131,11 @@ const aborted = computed({
   set: (val: boolean) => store.setAborted(val) 
 });
 
+const settings = computed({
+  get: () => store.settings || [],
+  set: (val) => store.updateSettings(val)
+});
+
 function addHistoryItem() {
   const question = inputText.value;
   const answer = outputText.value;
@@ -193,7 +198,13 @@ async function ask(): Promise<void> {
       selectedModel.value, 
       inputText.value, 
       systemPrompt.value,
-      store.history
+      store.history,
+      settings.value.reduce((acc, setting) => {
+        if (setting.key && setting.value) {
+          acc[setting.key] = setting.value;
+        }
+        return acc;
+      }, {} as { [key: string]: any })
     );
 
     if (!response.ok) {

@@ -29,7 +29,8 @@ export const useGlobalStore = defineStore('global', {
     askDate: null as string | null,
     answerDate: null as string | null,
     history: [] as PastActivity[],
-    chatId: null as string | null
+    chatId: null as string | null,
+    settings: [] as { key: string, value: string }[],
   }),
   
   getters: {
@@ -147,6 +148,26 @@ export const useGlobalStore = defineStore('global', {
     addHistoryItem(item: PastActivity) {
       // this.history.unshift(item);
       this.history.push(item);
-    }
+    },
+
+    updateSettings(settings: { key: string, value: string }[]) {
+      this.settings = settings;
+    },
+    
+    addSetting() {
+      this.settings.push({ key: '', value: '' });
+    },
+    
+    removeSetting(index: number) {
+      this.settings.splice(index, 1);
+    },
+    
+    updateSettingKey(index: number, key: string) {
+      this.settings[index].key = key;
+    },
+    
+    updateSettingValue(index: number, value: string) {
+      this.settings[index].value = value;
+    },
   }
 });

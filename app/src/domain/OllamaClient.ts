@@ -47,7 +47,8 @@ class OllamaClient {
         model: string, 
         prompt: string, 
         systemPrompt = '',
-        historyChatData: PastActivity[] = []
+        historyChatData: PastActivity[] = [],
+        settings: { [key: string]: any } = {}
     ): Promise<Response> {
         this.abortController = new AbortController();
         const response = await fetch(this.ollamaData.getFullAddress(mode), {
@@ -56,7 +57,7 @@ class OllamaClient {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(
-                this.ollamaData.getQueryObject(mode, model, prompt, systemPrompt, historyChatData)
+                this.ollamaData.getQueryObject(mode, model, prompt, systemPrompt, historyChatData, settings)
             ),
             signal: this.abortController.signal,
         });

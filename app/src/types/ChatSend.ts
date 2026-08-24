@@ -5,7 +5,8 @@ type ChatSend = {
     messages: MessageChatSend[],
     stream: boolean,
     chatId: string,
-    clientVersion: string
+    clientVersion: string,
+    options: { [key: string]: any }
 };
 
 export default ChatSend;

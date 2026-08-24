@@ -42,7 +42,8 @@ class OllamaData {
         model: string,
         prompt: string,
         systemPrompt = "",
-        historyChatData: PastActivity[] = []
+        historyChatData: PastActivity[] = [],
+        settings: { [key: string]: any } = {}
     ): ChatSend | GenerateSend {
         const messages = []
         if (systemPrompt !== "") {
@@ -66,11 +67,18 @@ class OllamaData {
                 messages, 
                 stream: true,
                 chatId: this.chatId,
-                clientVersion: this.clientVersion
+                clientVersion: this.clientVersion,
+                options: settings
             };
         }
         if (mode === 'generate') {
-            return { model, prompt, system: systemPrompt, stream: true };
+            return { 
+                model, 
+                prompt, 
+                system: systemPrompt, 
+                stream: true,
+                options: settings
+            };
         }
         throw new Error("Wrong mode given.");
     }
