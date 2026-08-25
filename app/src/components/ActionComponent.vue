@@ -192,7 +192,6 @@ async function ask(): Promise<void> {
   askDate.value = rendersDate(new Date());
 
   try {
-    // const reversedHistory = store.history.reverse();
     const response = await ollamaClient.getResponse(
       apiMode.value, 
       selectedModel.value, 
@@ -231,7 +230,6 @@ async function ask(): Promise<void> {
       }
 
       if (done) {
-        // answered.value = true;
         store.setAnswered(true);
       }
     }

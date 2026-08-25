@@ -31,6 +31,7 @@ export const useGlobalStore = defineStore('global', {
     history: [] as PastActivity[],
     chatId: null as string | null,
     settings: [] as { key: string, value: string }[],
+    dynamicOptions: [] as {key: string, value: string}[]
   }),
   
   getters: {
@@ -52,7 +53,8 @@ export const useGlobalStore = defineStore('global', {
     getOllamaClient: (state) => state.ollamaClient,
     getOllamaData: (state) => state.ollamaData,
     getAskDate: (state) => state.askDate,
-    getAnswerDate: (state) => state.answerDate
+    getAnswerDate: (state) => state.answerDate,
+    getDynamicOptions: (state) => state.dynamicOptions,
   },
   
   actions: {
@@ -146,7 +148,6 @@ export const useGlobalStore = defineStore('global', {
     },
 
     addHistoryItem(item: PastActivity) {
-      // this.history.unshift(item);
       this.history.push(item);
     },
 
@@ -168,6 +169,26 @@ export const useGlobalStore = defineStore('global', {
     
     updateSettingValue(index: number, value: string) {
       this.settings[index].value = value;
+    },
+
+    setDynamicOptions(options: { key: string, value: string }[]) {
+      this.dynamicOptions = options;
+    },
+
+    addDynamicOption(option: { key: string, value: string }) {
+      this.dynamicOptions.push(option);
+    },
+
+    removeDynamicOption(index: number) {
+      this.dynamicOptions.splice(index, 1);
+    },
+
+    updateDynamicOptionKey(index: number, key: string) {
+      this.dynamicOptions[index].key = key;
+    },
+
+    updateDynamicOptionValue(index: number, value: string) {
+      this.dynamicOptions[index].value = value;
     },
   }
 });
