@@ -62,7 +62,7 @@
               </div>
               
               <!-- Dynamic key/value pairs -->
-              <div v-for="(pair, index) in store.getDynamicOptions" :key="index" class="flex gap-2 mt-1">
+              <div v-for="(pair, index) in store.dynamicOptions" :key="index" class="flex gap-2 mt-1">
                 <input 
                   v-model="pair.key" 
                   type="text" 
@@ -126,7 +126,7 @@
 
 <script setup lang="ts">
 
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { ApiMode } from '../domain/OllamaData';
 import { useGlobalStore } from '../store';
 
@@ -150,16 +150,6 @@ const emits = defineEmits<{
 const copiedSystemPrompt = ref(false);
 const newKey = ref('');
 const newValue = ref('');
-
-// Sync local state with store
-watch(
-  () => store.getDynamicOptions,
-  (newOptions) => {
-    // We don't need to sync back to store here since we're just reading
-    // The store manages the actual data
-  },
-  { deep: true }
-);
 
 async function copySystemPrompt(): Promise<void> {
   try {
@@ -193,7 +183,7 @@ function addOption(): void {
     newValue.value = '';
     
     // Emit event for parent component if needed
-    emits('update:settings', store.getDynamicOptions);
+    emits('update:settings', store.dynamicOptions);
   }
 }
 
@@ -201,8 +191,8 @@ function removeOption(index: number): void {
   // Remove from store instead of local state
   store.removeDynamicOption(index);
   
-  // Emit event for parent component if needed
-  emits('update:settings', store.getDynamicOptions);
+  // Emit updated settings for parent component
+  emits('update:settings', store.dynamicOptions);
 }
 
 </script>

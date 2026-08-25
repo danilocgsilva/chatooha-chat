@@ -31,7 +31,7 @@ export const useGlobalStore = defineStore('global', {
     history: [] as PastActivity[],
     chatId: null as string | null,
     settings: [] as { key: string, value: string }[],
-    dynamicOptions: [] as {key: string, value: string}[]
+    dynamicOptions: [] as { key: string; value: string }[]
   }),
   
   getters: {
