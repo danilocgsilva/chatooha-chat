@@ -62,7 +62,7 @@
               </div>
               
               <!-- Dynamic key/value pairs -->
-              <div v-for="(pair, index) in dynamicOptions" :key="index" class="flex gap-2 mt-1">
+              <div v-for="(pair, index) in store.getDynamicOptions" :key="index" class="flex gap-2 mt-1">
                 <input 
                   v-model="pair.key" 
                   type="text" 
@@ -126,8 +126,11 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { ApiMode } from '../domain/OllamaData';
+import { useGlobalStore } from '../store';
+
+const store = useGlobalStore();
 
 const props = defineProps<{ 
   isDark: boolean; 
@@ -147,7 +150,16 @@ const emits = defineEmits<{
 const copiedSystemPrompt = ref(false);
 const newKey = ref('');
 const newValue = ref('');
-const dynamicOptions = ref<{key: string, value: string}[]>([]);
+
+// Sync local state with store
+watch(
+  () => store.getDynamicOptions,
+  (newOptions) => {
+    // We don't need to sync back to store here since we're just reading
+    // The store manages the actual data
+  },
+  { deep: true }
+);
 
 async function copySystemPrompt(): Promise<void> {
   try {
@@ -168,21 +180,29 @@ async function copySystemPrompt(): Promise<void> {
 
 function addOption(): void {
   if (newKey.value.trim()) {
-    dynamicOptions.value.push({
+    const newPair = {
       key: newKey.value,
       value: newValue.value
-    });
-
-    emits('update:settings', dynamicOptions.value);
+    };
     
+    // Add to store instead of local state
+    store.addDynamicOption(newPair);
+    
+    // Clear inputs
     newKey.value = '';
     newValue.value = '';
+    
+    // Emit event for parent component if needed
+    emits('update:settings', store.getDynamicOptions);
   }
 }
 
 function removeOption(index: number): void {
-  dynamicOptions.value.splice(index, 1);
-  emits('update:settings', dynamicOptions.value);
+  // Remove from store instead of local state
+  store.removeDynamicOption(index);
+  
+  // Emit event for parent component if needed
+  emits('update:settings', store.getDynamicOptions);
 }
 
 </script>
