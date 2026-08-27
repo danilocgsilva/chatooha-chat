@@ -136,6 +136,8 @@ const settings = computed({
   set: (val) => store.updateSettings(val)
 });
 
+const dynamicOptions = computed(() => store.dynamicOptions || []);
+
 function addHistoryItem() {
   const question = inputText.value;
   const answer = outputText.value;
@@ -198,9 +200,10 @@ async function ask(): Promise<void> {
       inputText.value, 
       systemPrompt.value,
       store.history,
-      settings.value.reduce((acc, setting) => {
-        if (setting.key && setting.value) {
-          acc[setting.key] = setting.value;
+      dynamicOptions.value.reduce((acc, setting) => {
+        if (setting.key) {
+          const num = Number(setting.value);
+          acc[setting.key] = setting.value === '' ? '' : isNaN(num) ? setting.value : num;
         }
         return acc;
       }, {} as { [key: string]: any })

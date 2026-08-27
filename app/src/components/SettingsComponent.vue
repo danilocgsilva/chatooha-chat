@@ -39,49 +39,27 @@
               ></textarea>
             </div>
             <div class="flex flex-col gap-2 w-1/3">
-              <!-- Existing key/value inputs -->
-              <div class="flex gap-2">
-                <input 
-                  v-model="newKey" 
-                  type="text" 
-                  placeholder="Key" 
+              <div v-for="(pair, index) in store.dynamicOptions" :key="index" class="flex gap-2">
+                <input
+                  v-model="pair.key"
+                  type="text"
+                  placeholder="Key"
                   class="flex-1 min-w-[80px] p-2 rounded border text-sm"
-                  :class="isDark 
-                    ? 'bg-dark-surface border-dark-border text-dark-subtle' 
+                  :class="isDark
+                    ? 'bg-dark-surface border-dark-border text-dark-subtle'
                     : 'bg-light-bg border-light-strong text-gray-800'"
                 />
-                <input 
-                  v-model="newValue" 
-                  type="text" 
-                  placeholder="Value" 
+                <input
+                  v-model="pair.value"
+                  type="text"
+                  placeholder="Value"
                   class="flex-1 min-w-[80px] p-2 rounded border text-sm"
-                  :class="isDark 
-                    ? 'bg-dark-surface border-dark-border text-dark-subtle' 
+                  :class="isDark
+                    ? 'bg-dark-surface border-dark-border text-dark-subtle'
                     : 'bg-light-bg border-light-strong text-gray-800'"
                 />
-              </div>
-              
-              <!-- Dynamic key/value pairs -->
-              <div v-for="(pair, index) in store.dynamicOptions" :key="index" class="flex gap-2 mt-1">
-                <input 
-                  v-model="pair.key" 
-                  type="text" 
-                  placeholder="Key" 
-                  class="flex-1 min-w-[80px] p-2 rounded border text-sm"
-                  :class="isDark 
-                    ? 'bg-dark-surface border-dark-border text-dark-subtle' 
-                    : 'bg-light-bg border-light-strong text-gray-800'"
-                />
-                <input 
-                  v-model="pair.value" 
-                  type="text" 
-                  placeholder="Value" 
-                  class="flex-1 min-w-[80px] p-2 rounded border text-sm"
-                  :class="isDark 
-                    ? 'bg-dark-surface border-dark-border text-dark-subtle' 
-                    : 'bg-light-bg border-light-strong text-gray-800'"
-                />
-                <button 
+                <button
+                  type="button"
                   @click="removeOption(index)"
                   class="px-2 py-1.5 rounded-lg text-sm border transition-colors"
                   :class="isDark
@@ -89,11 +67,11 @@
                     : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
                 >×</button>
               </div>
-              
-              <button 
-                @click="addOption" 
-                :disabled="!newKey.trim()"
-                class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30"
+
+              <button
+                type="button"
+                @click="addOption"
+                class="px-3 py-1.5 rounded-lg text-sm border transition-colors"
                 :class="isDark
                   ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
                   : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
@@ -140,16 +118,13 @@ const props = defineProps<{
   loading: boolean
 }>();
 
-const emits = defineEmits<{
+defineEmits<{
   (e: 'toggle'): void; 
   (e: 'update:mode', value: ApiMode): void; 
-  (e: 'update:systemPrompt', value: string): void 
-  (e: 'update:settings', value: {key: string, value: string}[]): void;
+  (e: 'update:systemPrompt', value: string): void;
 }>();
 
 const copiedSystemPrompt = ref(false);
-const newKey = ref('');
-const newValue = ref('');
 
 async function copySystemPrompt(): Promise<void> {
   try {
@@ -169,30 +144,11 @@ async function copySystemPrompt(): Promise<void> {
 }
 
 function addOption(): void {
-  if (newKey.value.trim()) {
-    const newPair = {
-      key: newKey.value,
-      value: newValue.value
-    };
-    
-    // Add to store instead of local state
-    store.addDynamicOption(newPair);
-    
-    // Clear inputs
-    newKey.value = '';
-    newValue.value = '';
-    
-    // Emit event for parent component if needed
-    emits('update:settings', store.dynamicOptions);
-  }
+  store.addDynamicOption({ key: '', value: '' });
 }
 
 function removeOption(index: number): void {
-  // Remove from store instead of local state
   store.removeDynamicOption(index);
-  
-  // Emit updated settings for parent component
-  emits('update:settings', store.dynamicOptions);
 }
 
 </script>
