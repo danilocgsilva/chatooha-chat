@@ -59,6 +59,7 @@
                     : 'bg-light-bg border-light-strong text-gray-800'"
                 />
                 <button
+                  v-if="index > 0"
                   type="button"
                   @click="removeOption(index)"
                   class="px-2 py-1.5 rounded-lg text-sm border transition-colors"
