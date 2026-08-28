@@ -9,7 +9,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      - PORT=${PORT:-8080}
+      - PORT=${PORT:-8099}
     ports:
       - "${PORT:-8099}:${PORT:-8099}"
       - "8199:22"

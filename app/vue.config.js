@@ -14,12 +14,7 @@ module.exports = defineConfig({
     allowedHosts: 'all',
     webSocketServer: 'ws',
     client: {
-      webSocketURL: {
-        hostname: '0.0.0.0',
-        pathname: '/ws',
-        port,
-        protocol: 'ws',
-      },
+      webSocketURL: 'auto://0.0.0.0:0/ws',
     },
   },
 });
