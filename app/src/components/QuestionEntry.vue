@@ -34,7 +34,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useGlobalStore } from '../store';
+import { useClipboard } from '../composables/useClipboard';
 
+const { copyToClipboard } = useClipboard();
 const store = useGlobalStore();
 
 const isDark = computed(() => store.isDark);
@@ -53,18 +55,7 @@ const answered = computed({
 const copiedInput = ref(false);
 
 async function copyInput(): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(inputText.value);
-  } catch {
-    const el = document.createElement('textarea');
-    el.value = inputText.value;
-    el.style.position = 'fixed';
-    el.style.opacity = '0';
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-  }
+  copyToClipboard(inputText.value);
   copiedInput.value = true;
   setTimeout(() => copiedInput.value = false, 2000);
 }

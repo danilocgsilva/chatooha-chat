@@ -190,5 +190,21 @@ export const useGlobalStore = defineStore('global', {
     updateDynamicOptionValue(index: number, value: string) {
       this.dynamicOptions[index].value = value;
     },
+
+    async copyTextToClipboard(text: string): Promise<void> {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        // Fallback for older browsers or secure contexts
+        const el = document.createElement('textarea');
+        el.value = text;
+        el.style.position = 'fixed';
+        el.style.opacity = '0';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
+    },
   }
 });

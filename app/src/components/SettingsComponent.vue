@@ -108,7 +108,9 @@
 import { ref } from 'vue';
 import { ApiMode } from '../domain/OllamaData';
 import { useGlobalStore } from '../store';
+import { useClipboard } from '../composables/useClipboard';
 
+const { copyToClipboard } = useClipboard();
 const store = useGlobalStore();
 
 const props = defineProps<{ 
@@ -128,18 +130,7 @@ defineEmits<{
 const copiedSystemPrompt = ref(false);
 
 async function copySystemPrompt(): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(props.systemPrompt);
-  } catch {
-    const el = document.createElement('textarea');
-    el.value = props.systemPrompt;
-    el.style.position = 'fixed';
-    el.style.opacity = '0';
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-  }
+  copyToClipboard(props.systemPrompt);
   copiedSystemPrompt.value = true;
   setTimeout(() => copiedSystemPrompt.value = false, 2000);
 }

@@ -8,3 +8,4 @@ app/.claude/**/*
 app/.claude.json
 app/.copilot/**/*
 .aider*
+app/.cline/data/*

@@ -8,7 +8,7 @@
   <p v-if="answerDate" class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-400'">{{ answerDate }}</p>
 
   <div class="flex justify-end">
-    <button @click="copyToClipboard" :disabled="!outputText" title="Copy to clipboard"
+    <button @click="copyAnswerToClipboard" :disabled="!outputText" title="Copy to clipboard"
       class="px-3 py-1.5 rounded-lg text-sm border transition-colors disabled:opacity-30" :class="isDark
         ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
         : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'">{{ copied ? '✓ Copied' : '⎘Copy' }}</button>
@@ -20,7 +20,9 @@
 
 import { ref, computed } from 'vue';
 import { useGlobalStore } from '../store';
+import { useClipboard } from '../composables/useClipboard';
 
+const { copyToClipboard } = useClipboard();
 const store = useGlobalStore();
 
 const props = defineProps<{
@@ -35,19 +37,8 @@ const answerDate = computed({
 
 const copied = ref(false);
 
-async function copyToClipboard(): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(props.outputText);
-  } catch {
-    const el = document.createElement('textarea');
-    el.value = props.outputText;
-    el.style.position = 'fixed';
-    el.style.opacity = '0';
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-  }
+async function copyAnswerToClipboard(): Promise<void> {
+  copyToClipboard(props.outputText);
   copied.value = true;
   setTimeout(() => copied.value = false, 2000);
 }
