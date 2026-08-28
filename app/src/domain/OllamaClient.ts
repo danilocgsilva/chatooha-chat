@@ -48,7 +48,7 @@ class OllamaClient {
         prompt: string, 
         systemPrompt = '',
         historyChatData: PastActivity[] = [],
-        settings: { [key: string]: any } = {}
+        settings: { [key: string]: unknown } = {}
     ): Promise<Response> {
         this.abortController = new AbortController();
         const response = await fetch(this.ollamaData.getFullAddress(mode), {

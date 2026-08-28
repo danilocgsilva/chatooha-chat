@@ -144,10 +144,6 @@ const answered = computed({
   get: () => store.answered,
   set: (answered: boolean) => store.setAnswered(answered)
 });
-const settings = computed({
-  get: () => store.settings || [],
-  set: (val) => store.updateSettings(val)
-});
 
 const ollama = store.ollamaData as OllamaData;
 const ollamaClient = store.ollamaClient as OllamaClient;

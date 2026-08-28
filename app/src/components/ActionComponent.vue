@@ -131,11 +131,6 @@ const aborted = computed({
   set: (val: boolean) => store.setAborted(val) 
 });
 
-const settings = computed({
-  get: () => store.settings || [],
-  set: (val) => store.updateSettings(val)
-});
-
 const dynamicOptions = computed(() => store.dynamicOptions || []);
 
 function addHistoryItem() {
@@ -206,7 +201,7 @@ async function ask(): Promise<void> {
           acc[setting.key] = setting.value === '' ? '' : isNaN(num) ? setting.value : num;
         }
         return acc;
-      }, {} as { [key: string]: any })
+      }, {} as { [key: string]: unknown })
     );
 
     if (!response.ok) {

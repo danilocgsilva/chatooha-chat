@@ -43,7 +43,7 @@ class OllamaData {
         prompt: string,
         systemPrompt = "",
         historyChatData: PastActivity[] = [],
-        settings: { [key: string]: any } = {}
+        settings: { [key: string]: unknown } = {}
     ): ChatSend | GenerateSend {
         const messages = []
         if (systemPrompt !== "") {
