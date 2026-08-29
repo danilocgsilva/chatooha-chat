@@ -31,11 +31,11 @@
                 class="w-full h-24 p-3 rounded-lg border resize-y focus:outline-none focus:ring-2 transition-colors"
                 :class="loading
                   ? isDark
-                    ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default placeholder-dark-subtle'
-                    : 'bg-light-surface text-gray-500 border-light-strong cursor-default placeholder-light-subtle'
+                    ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default placeholder-dark-subtle focus:ring-dark-muted'
+                    : 'bg-light-surface text-gray-500 border-light-strong cursor-default placeholder-light-subtle focus:ring-light-subtle'
                   : isDark
-                    ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-dark-muted placeholder-dark-subtle'
-                    : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
+                    ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-2 focus:ring-dark-muted placeholder-dark-subtle'
+                    : 'bg-light-bg text-gray-800 border-light-strong focus:ring-2 focus:ring-light-subtle placeholder-light-subtle'"
               ></textarea>
             </div>
             <div class="flex flex-col gap-2 w-1/3">
@@ -44,19 +44,19 @@
                   v-model="pair.key"
                   type="text"
                   placeholder="Key"
-                  class="flex-1 min-w-[80px] p-2 rounded border text-sm"
+                  class="flex-1 min-w-[80px] p-2 rounded-lg border text-sm transition-colors focus:outline-none focus:ring-2"
                   :class="isDark
-                    ? 'bg-dark-surface border-dark-border text-dark-subtle'
-                    : 'bg-light-bg border-light-strong text-gray-800'"
+                    ? 'bg-dark-surface border-dark-border text-dark-subtle focus:ring-dark-muted'
+                    : 'bg-light-bg border-light-strong text-gray-800 focus:ring-light-subtle'"
                 />
                 <input
                   v-model="pair.value"
                   type="text"
                   placeholder="Value"
-                  class="flex-1 min-w-[80px] p-2 rounded border text-sm"
+                  class="flex-1 min-w-[80px] p-2 rounded-lg border text-sm transition-colors focus:outline-none focus:ring-2"
                   :class="isDark
-                    ? 'bg-dark-surface border-dark-border text-dark-subtle'
-                    : 'bg-light-bg border-light-strong text-gray-800'"
+                    ? 'bg-dark-surface border-dark-border text-dark-subtle focus:ring-dark-muted'
+                    : 'bg-light-bg border-light-strong text-gray-800 focus:ring-light-subtle'"
                 />
                 <button
                   v-if="index > 0"

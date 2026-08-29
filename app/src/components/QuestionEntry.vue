@@ -4,11 +4,11 @@
       v-model="inputText"
       :readonly="!!modelsError || models.length === 0 || loading || answered"
       placeholder="Type here..."
-      class="w-full h-60 min-h-40 p-3 rounded-lg border resize-y focus:outline-none focus:ring-2 transition-colors"
+      class="w-full h-60 min-h-40 p-3 rounded-lg border resize-y transition-colors focus:outline-none focus:ring-2"
       :class="!!modelsError || models.length === 0 || loading || answered
         ? isDark
-          ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default placeholder-dark-subtle'
-          : 'bg-light-surface text-gray-500 border-light-strong cursor-default placeholder-light-subtle'
+          ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default placeholder-dark-subtle focus:ring-dark-muted'
+          : 'bg-light-surface text-gray-500 border-light-strong cursor-default placeholder-light-subtle focus:ring-light-subtle'
         : isDark
           ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-dark-muted placeholder-dark-subtle'
           : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle'"
