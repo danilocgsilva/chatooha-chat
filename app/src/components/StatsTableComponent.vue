@@ -1,35 +1,33 @@
 <template>
   <div :class="['stats-container', { 'dark-mode': isDark }]">
-    <div class="stats-container">
-      <h2 class="stats-title font-bold" :class="isDark ? 'text-dark-subtle' : 'text-gray-800'">Model Usage Statistics</h2>
-      
-      <div v-if="loading" class="loading">
-        <div class="spinner"></div>
-        <p>Loading statistics...</p>
-      </div>
-      
-      <div v-else-if="error" class="error">
-        <p>{{ error }}</p>
-      </div>
-      
-      <table v-else class="stats-table">
-        <thead>
-          <tr>
-            <th class="count-column" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Count</th>
-            <th :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Model Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in stats" :key="index">
-            <td class="count-cell" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">{{ item.count }}</td>
-            <td class="model-cell" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">{{ item.model }}</td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <div v-if="stats.length === 0 && !loading && !error" class="no-data">
-        <p>No statistics available</p>
-      </div>
+    <h2 class="stats-title font-bold" :class="isDark ? 'text-dark-subtle' : 'text-gray-800'">Model Usage Statistics</h2>
+
+    <div v-if="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading statistics...</p>
+    </div>
+
+    <div v-else-if="error" class="error">
+      <p>{{ error }}</p>
+    </div>
+
+    <table v-else class="stats-table">
+      <thead>
+        <tr>
+          <th class="count-column" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Count</th>
+          <th :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Model Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in stats" :key="index">
+          <td class="count-cell" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">{{ item.count }}</td>
+          <td class="model-cell" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">{{ item.model }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div v-if="stats.length === 0 && !loading && !error" class="no-data">
+      <p>No statistics available</p>
     </div>
   </div>
 </template>
@@ -53,12 +51,12 @@ defineProps<{
 const fetchStats = async () => {
   try {
     loading.value = true;
-    
+
     const ollamaClient = new OllamaClient(new OllamaData(serverDns.value));
 
     stats.value = await ollamaClient.getStatistics();
     error.value = null;
-    
+
   } catch (err) {
     error.value = 'Failed to load statistics';
     console.error('Stats fetch error:', err);
@@ -121,7 +119,9 @@ onMounted(() => {
   word-break: break-all;
 }
 
-.loading, .error, .no-data {
+.loading,
+.error,
+.no-data {
   text-align: center;
   padding: 2rem;
   color: var(--text-secondary-color);
@@ -138,7 +138,9 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Dark mode styles */
