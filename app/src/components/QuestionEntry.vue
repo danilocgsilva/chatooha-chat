@@ -4,7 +4,7 @@
       v-model="inputText"
       :readonly="!!modelsError || models.length === 0 || loading || answered"
       placeholder="Type here..."
-      class="w-full h-60 min-h-40 p-3 rounded-lg border resize-y transition-colors focus:outline-none focus:ring-2 [scrollbar-width:thin] [scrollbar-gutter:stable]"
+      class="w-full h-60 min-h-40 p-3 rounded-lg border resize-y transition-colors focus:outline-none focus:ring-2 [scrollbar-width:thin] [scrollbar-gutter:stable] [resize:vertical]"
       :class="[
         !!modelsError || models.length === 0 || loading || answered
           ? isDark
@@ -14,7 +14,7 @@
             ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-dark-muted placeholder-dark-subtle'
             : 'bg-light-bg text-gray-800 border-light-strong focus:ring-light-subtle placeholder-light-subtle',
         isDark
-          ? '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-dark-muted hover:[&::-webkit-scrollbar-thumb]:bg-dark-subtle [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-corner]:bg-transparent [scrollbar-color:theme(colors.dark.muted)_transparent]'
+          ? '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-dark-muted hover:[&::-webkit-scrollbar-thumb]:bg-dark-subtle [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-corner]:bg-transparent [scrollbar-color:theme(colors.dark.muted)_transparent] [&::-webkit-resizer]:bg-[radial-gradient(circle_at_100%_100%,theme(colors.dark.bg)_0,theme(colors.dark.bg)_12%,theme(colors.dark.strong)_12%,theme(colors.dark.strong)_24%,theme(colors.dark.border)_24%,theme(colors.dark.strong)_40%,transparent_40%,transparent_100%)]'
           : '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-light-strong hover:[&::-webkit-scrollbar-thumb]:bg-light-subtle [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-corner]:bg-transparent [scrollbar-color:theme(colors.light.strong)_transparent]'
       ]"
     ></textarea>

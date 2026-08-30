@@ -26,6 +26,7 @@ module.exports = {
           bg:       '#4a1f24',
           surface:  '#5e2a2e',
           border:   '#7a2e2e',
+          strong:   '#6a2b2f',
           muted:    '#8c3a3a',
           subtle:   '#aaaaaa',
         },
