@@ -174,6 +174,9 @@ async function ask(): Promise<void> {
     outputText.value = '';
     requestError.value = null;
     askDate.value = null;
+    answerDate.value = null;
+    store.setAnswerStartedAt(null);
+    store.setAnswerDuration(null);
     store.setAnswered(false);
     return;
   }
@@ -185,6 +188,9 @@ async function ask(): Promise<void> {
   loading.value = true;
   outputText.value = '';
   requestError.value = null;
+  answerDate.value = null;
+  store.setAnswerDuration(null);
+  store.setAnswerStartedAt(Date.now());
 
   askDate.value = rendersDate(new Date());
 
@@ -236,6 +242,15 @@ async function ask(): Promise<void> {
   } finally {
     loading.value = false;
     answerDate.value = rendersDate(new Date());
+
+    if (store.answerStartedAt) {
+      const elapsedMs = Date.now() - store.answerStartedAt;
+      const minutes = String(Math.floor(elapsedMs / 60000)).padStart(2, '0');
+      const seconds = String(Math.floor((elapsedMs % 60000) / 1000)).padStart(2, '0');
+      store.setAnswerDuration(`${minutes}:${seconds}`);
+    }
+
+    store.setAnswerStartedAt(null);
     ollamaClient.cleanAbord();
     if (!requestError.value && !aborted.value) store.setAnswered(true);
 
@@ -250,6 +265,9 @@ async function ask(): Promise<void> {
 
 function cancel(): void {
   ollamaClient.abort();
+  answerDate.value = null;
+  store.setAnswerStartedAt(null);
+  store.setAnswerDuration(null);
   store.setAnswered(false);
   aborted.value = true;
 }

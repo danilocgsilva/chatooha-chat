@@ -6,7 +6,9 @@
       ? ['bg-dark-bg text-dark-subtle border-dark-border placeholder-dark-subtle focus:ring-dark-muted', '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-dark-muted hover:[&::-webkit-scrollbar-thumb]:bg-dark-subtle [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-corner]:bg-transparent [&::-webkit-resizer]:bg-[radial-gradient(circle_at_100%_100%,theme(colors.dark.bg)_0,theme(colors.dark.bg)_12%,theme(colors.dark.strong)_12%,theme(colors.dark.strong)_24%,theme(colors.dark.border)_24%,theme(colors.dark.border)_40%,transparent_40%,transparent_100%)] [scrollbar-color:theme(colors.dark.muted)_transparent]']
       : ['bg-light-surface text-gray-500 border-light-strong placeholder-light-subtle focus:ring-light-subtle', '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-light-strong hover:[&::-webkit-scrollbar-thumb]:bg-light-subtle [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-corner]:bg-transparent [scrollbar-color:theme(colors.light.strong)_transparent]']"></textarea>
 
-  <p v-if="answerDate" class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-400'">{{ answerDate }}</p>
+  <p v-if="answerDate || loading" class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-400'">
+    {{ answerDate ? `${answerDate} • ${answerDuration ?? elapsedTime}` : elapsedTime }}
+  </p>
 
   <div class="flex justify-end">
     <button @click="copyAnswerToClipboard" :disabled="!outputText" title="Copy to clipboard"
@@ -19,7 +21,7 @@
 
 <script setup lang="ts">
 
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onBeforeUnmount } from 'vue';
 import { useGlobalStore } from '../store';
 import { useClipboard } from '../composables/useClipboard';
 
@@ -31,9 +33,61 @@ const props = defineProps<{
   isDark: boolean
 }>();
 
+const loading = computed({
+  get: () => store.loading,
+  set: (value: boolean) => store.setLoading(value)
+});
+
 const answerDate = computed({
   get: () => store.answerDate,
   set: (answerDate) => store.setAnswerDate(answerDate)
+});
+
+const answerDuration = computed({
+  get: () => store.answerDuration,
+  set: (duration: string | null) => store.setAnswerDuration(duration)
+});
+
+const elapsedTime = ref('00:00');
+let timerId: number | undefined;
+
+function formatElapsedTime(timestamp: number | null): string {
+  if (!timestamp) return '00:00';
+
+  const elapsed = Math.max(0, Date.now() - timestamp);
+  const minutes = String(Math.floor(elapsed / 60000)).padStart(2, '0');
+  const seconds = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, '0');
+
+  return `${minutes}:${seconds}`;
+}
+
+watch(
+  () => [store.loading, store.answerStartedAt] as const,
+  ([isLoading, startedAt]) => {
+    if (timerId) {
+      window.clearInterval(timerId);
+      timerId = undefined;
+    }
+
+    if (isLoading && startedAt) {
+      const updateElapsedTime = () => {
+        elapsedTime.value = formatElapsedTime(startedAt);
+      };
+
+      updateElapsedTime();
+      timerId = window.setInterval(updateElapsedTime, 100);
+      return;
+    }
+
+    elapsedTime.value = startedAt ? formatElapsedTime(startedAt) : '00:00';
+  },
+  { immediate: true }
+);
+
+onBeforeUnmount(() => {
+  if (timerId) {
+    window.clearInterval(timerId);
+  }
 });
 
 const copied = ref(false);

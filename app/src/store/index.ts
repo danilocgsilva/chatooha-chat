@@ -28,6 +28,8 @@ export const useGlobalStore = defineStore('global', {
     ollamaClient: null as OllamaClient | null,
     askDate: null as string | null,
     answerDate: null as string | null,
+    answerStartedAt: null as number | null,
+    answerDuration: null as string | null,
     history: [] as PastActivity[],
     chatId: null as string | null,
     settings: [] as { key: string, value: string }[],
@@ -54,6 +56,8 @@ export const useGlobalStore = defineStore('global', {
     getOllamaData: (state) => state.ollamaData,
     getAskDate: (state) => state.askDate,
     getAnswerDate: (state) => state.answerDate,
+    getAnswerStartedAt: (state) => state.answerStartedAt,
+    getAnswerDuration: (state) => state.answerDuration,
     getDynamicOptions: (state) => state.dynamicOptions,
   },
   
@@ -85,6 +89,14 @@ export const useGlobalStore = defineStore('global', {
 
     setAnswerDate(answerDateString: string | null) {
       this.answerDate = answerDateString;
+    },
+
+    setAnswerStartedAt(timestamp: number | null) {
+      this.answerStartedAt = timestamp;
+    },
+
+    setAnswerDuration(duration: string | null) {
+      this.answerDuration = duration;
     },
     
     setModels(models: string[]) {
