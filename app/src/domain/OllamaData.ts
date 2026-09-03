@@ -43,7 +43,8 @@ class OllamaData {
         prompt: string,
         systemPrompt = "",
         historyChatData: PastActivity[] = [],
-        settings: { [key: string]: unknown } = {}
+        settings: { [key: string]: unknown } = {},
+        disableReasoning = false
     ): ChatSend | GenerateSend {
         const messages = []
         if (systemPrompt !== "") {
@@ -68,7 +69,8 @@ class OllamaData {
                 stream: true,
                 chatId: this.chatId,
                 clientVersion: this.clientVersion,
-                options: settings
+                options: settings,
+                ...(disableReasoning ? { think: false } : {})
             };
         }
         if (mode === 'generate') {

@@ -33,7 +33,8 @@ export const useGlobalStore = defineStore('global', {
     history: [] as PastActivity[],
     chatId: null as string | null,
     settings: [] as { key: string, value: string }[],
-    dynamicOptions: [{ key: '', value: '' }] as { key: string; value: string }[]
+    dynamicOptions: [{ key: '', value: '' }] as { key: string; value: string }[],
+    disableReasoning: false
   }),
   
   getters: {
@@ -59,6 +60,7 @@ export const useGlobalStore = defineStore('global', {
     getAnswerStartedAt: (state) => state.answerStartedAt,
     getAnswerDuration: (state) => state.answerDuration,
     getDynamicOptions: (state) => state.dynamicOptions,
+    getDisableReasoning: (state) => state.disableReasoning,
   },
   
   actions: {
@@ -185,6 +187,10 @@ export const useGlobalStore = defineStore('global', {
 
     setDynamicOptions(options: { key: string, value: string }[]) {
       this.dynamicOptions = options;
+    },
+
+    setDisableReasoning(value: boolean) {
+      this.disableReasoning = value;
     },
 
     addDynamicOption(option: { key: string, value: string }) {

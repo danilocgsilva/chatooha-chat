@@ -211,7 +211,8 @@ async function ask(): Promise<void> {
           }
         }
         return acc;
-      }, {} as { [key: string]: unknown })
+      }, {} as { [key: string]: unknown }),
+      store.disableReasoning
     );
 
     if (!response.ok) {

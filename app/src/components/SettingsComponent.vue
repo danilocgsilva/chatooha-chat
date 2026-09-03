@@ -44,6 +44,14 @@
               ></textarea>
             </div>
             <div class="flex flex-col gap-2 w-1/3">
+              <label class="flex items-center gap-2 text-sm cursor-pointer"
+                :class="isDark ? 'text-dark-subtle' : 'text-gray-700'"
+              >
+                <input type="checkbox" :checked="store.disableReasoning"
+                  @change="store.setDisableReasoning(($event.target as HTMLInputElement).checked)"
+                />
+                Disable reasoning
+              </label>
               <div v-for="(pair, index) in store.dynamicOptions" :key="index" class="flex gap-2">
                 <input
                   v-model="pair.key"
