@@ -203,8 +203,12 @@ async function ask(): Promise<void> {
       store.history,
       dynamicOptions.value.reduce((acc, setting) => {
         if (setting.key) {
-          const num = Number(setting.value);
-          acc[setting.key] = setting.value === '' ? '' : isNaN(num) ? setting.value : num;
+          if (setting.value === 'true' || setting.value === 'false') {
+            acc[setting.key] = setting.value === 'true';
+          } else {
+            const num = Number(setting.value);
+            acc[setting.key] = setting.value === '' ? '' : isNaN(num) ? setting.value : num;
+          }
         }
         return acc;
       }, {} as { [key: string]: unknown })
