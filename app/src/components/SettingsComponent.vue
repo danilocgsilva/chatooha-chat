@@ -10,10 +10,11 @@
           <span class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">API Mode</span>
           <div class="flex gap-4">
 
-            <label v-for="option in (['chat', 'generate'] as ApiMode[])" :key="option" class="flex items-center gap-1.5 text-sm cursor-pointer"
-              :class="isDark ? 'text-dark-subtle' : 'text-gray-700'"
+            <label v-for="option in (['chat', 'generate'] as ApiMode[])" :key="option" class="flex items-center gap-1.5 text-sm"
+              :class="[isDark ? 'text-dark-subtle' : 'text-gray-700', loading ? 'cursor-default opacity-60' : 'cursor-pointer']"
             >
               <input type="radio" :value="option" :checked="mode === option"
+                :disabled="loading"
                 @change="$emit('update:mode', option)"
               />
               {{ option }}
@@ -32,8 +33,8 @@
                 :class="[
                   loading
                     ? isDark
-                      ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default placeholder-dark-subtle focus:ring-dark-muted'
-                      : 'bg-light-surface text-gray-500 border-light-strong cursor-default placeholder-light-subtle focus:ring-light-subtle'
+                      ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default placeholder-dark-subtle focus:ring-dark-muted opacity-60'
+                      : 'bg-light-surface text-gray-500 border-light-strong cursor-default placeholder-light-subtle focus:ring-light-subtle opacity-60'
                     : isDark
                       ? 'bg-dark-surface text-dark-subtle border-dark-border focus:ring-2 focus:ring-dark-muted placeholder-dark-subtle'
                       : 'bg-light-bg text-gray-800 border-light-strong focus:ring-2 focus:ring-light-subtle placeholder-light-subtle',
@@ -44,10 +45,11 @@
               ></textarea>
             </div>
             <div class="flex flex-col gap-2 w-1/3">
-              <label class="flex items-center gap-2 text-sm cursor-pointer"
-                :class="isDark ? 'text-dark-subtle' : 'text-gray-700'"
+              <label class="flex items-center gap-2 text-sm"
+                :class="[isDark ? 'text-dark-subtle' : 'text-gray-700', loading ? 'cursor-default opacity-60' : 'cursor-pointer']"
               >
                 <input type="checkbox" :checked="store.disableReasoning"
+                  :disabled="loading"
                   @change="store.setDisableReasoning(($event.target as HTMLInputElement).checked)"
                 />
                 Disable reasoning
@@ -57,38 +59,58 @@
                   v-model="pair.key"
                   type="text"
                   placeholder="Key"
+                  :disabled="loading"
                   class="flex-1 min-w-[80px] p-2 rounded-lg border text-sm transition-colors focus:outline-none focus:ring-2"
-                  :class="isDark
-                    ? 'bg-dark-surface border-dark-border text-dark-subtle focus:ring-dark-muted'
-                    : 'bg-light-bg border-light-strong text-gray-800 focus:ring-light-subtle'"
+                  :class="loading
+                    ? isDark
+                      ? 'bg-dark-bg border-dark-border text-dark-subtle cursor-default opacity-60'
+                      : 'bg-light-surface border-light-strong text-gray-500 cursor-default opacity-60'
+                    : isDark
+                      ? 'bg-dark-surface border-dark-border text-dark-subtle focus:ring-dark-muted'
+                      : 'bg-light-bg border-light-strong text-gray-800 focus:ring-light-subtle'"
                 />
                 <input
                   v-model="pair.value"
                   type="text"
                   placeholder="Value"
+                  :disabled="loading"
                   class="flex-1 min-w-[80px] p-2 rounded-lg border text-sm transition-colors focus:outline-none focus:ring-2"
-                  :class="isDark
-                    ? 'bg-dark-surface border-dark-border text-dark-subtle focus:ring-dark-muted'
-                    : 'bg-light-bg border-light-strong text-gray-800 focus:ring-light-subtle'"
+                  :class="loading
+                    ? isDark
+                      ? 'bg-dark-bg border-dark-border text-dark-subtle cursor-default opacity-60'
+                      : 'bg-light-surface border-light-strong text-gray-500 cursor-default opacity-60'
+                    : isDark
+                      ? 'bg-dark-surface border-dark-border text-dark-subtle focus:ring-dark-muted'
+                      : 'bg-light-bg border-light-strong text-gray-800 focus:ring-light-subtle'"
                 />
                 <button
                   v-if="index > 0"
                   type="button"
+                  :disabled="loading"
                   @click="removeOption(index)"
                   class="px-2 py-1.5 rounded-lg text-sm border transition-colors"
-                  :class="isDark
-                    ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
-                    : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
+                  :class="loading
+                    ? isDark
+                      ? 'bg-dark-bg text-dark-subtle border-dark-border opacity-60 cursor-default'
+                      : 'bg-light-surface text-gray-500 border-light-strong opacity-60 cursor-default'
+                    : isDark
+                      ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
+                      : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
                 >×</button>
               </div>
 
               <button
                 type="button"
+                :disabled="loading"
                 @click="addOption"
                 class="px-3 py-1.5 rounded-lg text-sm border transition-colors"
-                :class="isDark
-                  ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
-                  : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
+                :class="loading
+                  ? isDark
+                    ? 'bg-dark-bg text-dark-subtle border-dark-border opacity-60 cursor-default'
+                    : 'bg-light-surface text-gray-500 border-light-strong opacity-60 cursor-default'
+                  : isDark
+                    ? 'bg-dark-surface text-dark-subtle border-dark-border hover:bg-dark-muted'
+                    : 'bg-light-surface text-gray-700 border-light-strong hover:bg-light-muted'"
               >
                 Add Option
               </button>

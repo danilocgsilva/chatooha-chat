@@ -42,10 +42,15 @@
           <span class="text-xs" :class="isDark ? 'text-dark-subtle' : 'text-gray-500'">Model</span>
           <select
             v-model="selectedModel"
+            :disabled="loading"
             class="px-3 py-1.5 pr-8 rounded-lg text-sm border transition-colors focus:outline-none appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[length:1rem]"
-            :class="isDark
-              ? 'bg-dark-surface text-dark-subtle border-dark-border'
-              : 'bg-light-surface text-gray-700 border-light-strong'"
+            :class="loading
+              ? isDark
+                ? 'bg-dark-bg text-dark-subtle border-dark-border cursor-default opacity-60'
+                : 'bg-light-surface text-gray-500 border-light-strong cursor-default opacity-60'
+              : isDark
+                ? 'bg-dark-surface text-dark-subtle border-dark-border'
+                : 'bg-light-surface text-gray-700 border-light-strong'"
             :style="{ backgroundImage: arrowSvg }"
           >
             <option value="" disabled>{{ modelsError ? 'Unavailable' : models.length === 0 ? 'Loading...' : '' }}</option>
@@ -69,7 +74,7 @@
         :show="showSettings" 
         :mode="apiMode" 
         :systemPrompt="systemPrompt"
-        :loading="loading || answered"
+        :loading="loading"
         @toggle="toggleSettings" 
         @update:mode="apiMode = $event" 
         @update:systemPrompt="systemPrompt = $event" />
