@@ -6,7 +6,7 @@
   <div class="flex flex-col gap-4 p-12 max-w-5xl mx-auto w-full">
     <div class="flex justify-between items-center">
       <span class="text-lg font-semibold" :class="isDark ? 'text-dark-subtle' : 'text-gray-800'">
-        Mock Server Name
+        {{ serverName }}
       </span>
       <button
         @click="toggleTheme"
@@ -156,6 +156,8 @@ const answered = computed({
 const ollama = store.ollamaData as OllamaData;
 const ollamaClient = store.ollamaClient as OllamaClient;
 
+const serverName = computed(() => store.serverName || '');
+
 let dnsDebounce: ReturnType<typeof setTimeout>;
 
 async function fetchModels(): Promise<void> {
@@ -175,13 +177,30 @@ async function fetchModels(): Promise<void> {
   }
 }
 
+async function fetchServerName(): Promise<void> {
+  try {
+    const response = await fetch(`http://${serverDns.value}/api/server_place`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    store.setServerName(data.message);
+  } catch (error) {
+    console.error('Failed to fetch server name:', error);
+  }
+}
+
 onMounted(() => {
   fetchModels();
+  fetchServerName();
 });
 
 watch(serverDns, () => {
   clearTimeout(dnsDebounce);
-  dnsDebounce = setTimeout(fetchModels, 3000);
+  dnsDebounce = setTimeout(() => {
+    fetchModels();
+    fetchServerName();
+  }, 3000);
 });
 
 watch(loading, (isLoading: boolean) => {

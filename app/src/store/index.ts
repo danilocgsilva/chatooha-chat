@@ -34,7 +34,8 @@ export const useGlobalStore = defineStore('global', {
     chatId: null as string | null,
     settings: [] as { key: string, value: string }[],
     dynamicOptions: [{ key: '', value: '' }] as { key: string; value: string }[],
-    disableReasoning: false
+    disableReasoning: false,
+    serverName: null as string | null // New state for server name
   }),
   
   getters: {
@@ -61,6 +62,7 @@ export const useGlobalStore = defineStore('global', {
     getAnswerDuration: (state) => state.answerDuration,
     getDynamicOptions: (state) => state.dynamicOptions,
     getDisableReasoning: (state) => state.disableReasoning,
+    getServerName: (state) => state.serverName,
   },
   
   actions: {
@@ -223,6 +225,9 @@ export const useGlobalStore = defineStore('global', {
         document.execCommand('copy');
         document.body.removeChild(el);
       }
+    },
+    setServerName(name: string | null) {
+      this.serverName = name;
     },
   }
 });
