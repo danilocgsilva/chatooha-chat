@@ -57,7 +57,7 @@ import { PastActivity } from 'types/PastActivity';
 function playNotificationSound() {
   try {
     const audio = new Audio('/sounds/521646__fupicat__winmutedguitar/521646__fupicat__winmutedguitar.wav');
-    audio.volume = 0.5;
+    audio.volume = 1;
     audio.play().catch(e => console.warn('Audio play failed:', e));
   } catch (error) {
     console.warn('Failed to play notification sound:', error);
