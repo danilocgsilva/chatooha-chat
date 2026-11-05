@@ -54,6 +54,16 @@ import { ApiMode } from '../domain/OllamaData';
 import OllamaClient from '../domain/OllamaClient';
 import { PastActivity } from 'types/PastActivity';
 
+function playNotificationSound() {
+  try {
+    const audio = new Audio('/sounds/521646__fupicat__winmutedguitar/521646__fupicat__winmutedguitar.wav');
+    audio.volume = 0.5;
+    audio.play().catch(e => console.warn('Audio play failed:', e));
+  } catch (error) {
+    console.warn('Failed to play notification sound:', error);
+  }
+}
+
 function showNotification(title: string, message: string) {
   if (!('Notification' in window)) {
     console.warn('This browser does not support desktop notification');
@@ -260,7 +270,7 @@ async function ask(): Promise<void> {
     if (!requestError.value && !aborted.value) store.setAnswered(true);
 
     if (!requestError.value && !aborted.value) {
-      // store.setAnswered(true);
+      playNotificationSound();
       showNotification('Response Complete', 'Your answer has been generated');
     }
 
